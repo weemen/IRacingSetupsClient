@@ -14,7 +14,6 @@ def startup():
     ir = irsdk.IRSDK()
     logging.info("irsdk initialized")
     state = State()
-    max_retries = 5
     try:
         # infinite loop
         while True:
@@ -22,14 +21,9 @@ def startup():
             check_iracing(state, ir)
             # if we are, then process data
             if state.ir_connected:
-                max_retries = 5
                 logging.info("Connect to iracing")
             else:
                 logging.info("failed to connect to iracing")
-                max_retries -= 1
-                if max_retries == 0:
-                    logging.info("max retries reached, exiting")
-                    exit()
 
             # sleep for 1 second
             # maximum you can use is 1/60
