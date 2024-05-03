@@ -29,10 +29,10 @@ def startup():
                     "configName": ir['WeekendInfo']['TrackConfigName'],
                 }
 
-                current_info["session"] = {
-                    "fastedLapTime": ir['SessionInfo']['SessionLaps'][0]['Results'][0]['FastestTime'],
-                    "laps": ir['SessionInfo']['Sessions'][0]['Results'][0]['Laps'],
-                }
+                # current_info["session"] = {
+                #     "fastedLapTime": ir['SessionInfo']['SessionLaps'][0]['Results'][0]['FastestTime'],
+                #     "laps": ir['SessionInfo']['Sessions'][0]['Results'][0]['Laps'],
+                # }
 
                 logging.info(ir["DriverInfo"])
             else:
