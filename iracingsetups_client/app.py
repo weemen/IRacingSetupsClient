@@ -28,7 +28,13 @@ def startup():
                     "name": ir['WeekendInfo']['TrackName'],
                     "configName": ir['WeekendInfo']['TrackConfigName'],
                 }
-                logging.info(ir["SessionInfo"])
+
+                current_info["session"] = {
+                    "fastedLapTime": ir['SessionInfo']['SessionLaps'][0]['Results'][0]['FastestTime'],
+                    "laps": ir['SessionInfo']['Sessions'][0]['Results'][0]['Laps'],
+                }
+
+                logging.info(ir["DriverInfo"])
             else:
                 logging.info("failed to connect to iracing")
 
