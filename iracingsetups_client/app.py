@@ -38,11 +38,11 @@ def startup():
                     "id": ir['DriverInfo']['Drivers'][0]['UserID'],
                     "name": ir['DriverInfo']['Drivers'][0]['UserName'],
                     "car": ir['DriverInfo']['Drivers'][0]['CarScreenName'],
-                    "carId": ir['DriverInfo']['Drivers'][0]['CarIdx'],
+                    "carId": ir['DriverInfo']['Drivers'][0]['CarID'],
                     "teamId": ir['DriverInfo']['Drivers'][0]['TeamID'],
                     "setup": ir['DriverInfo']['DriverSetupName'],
                 }
-                logging.info(current_info["driver"])
+                logging.info(ir["CarSetup"])
             else:
                 logging.info("failed to connect to iracing")
 
