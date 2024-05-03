@@ -14,6 +14,7 @@ def startup():
     ir = irsdk.IRSDK()
     logging.info("irsdk initialized")
     state = State()
+    current_info = {}
     try:
         # infinite loop
         while True:
@@ -22,7 +23,12 @@ def startup():
             # if we are, then process data
             if state.ir_connected:
                 logging.info("Connect to iracing")
-                logging.info(ir['WeekendInfo'])
+                current_info["track"] = {
+                    "id": ir['WeekendInfo']['TrackID'],
+                    "name": ir['WeekendInfo']['TrackName'],
+                    "configName": ir['WeekendInfo']['TrackConfigName'],
+                }
+                logging.info(ir["SessionInfo"])
             else:
                 logging.info("failed to connect to iracing")
 
