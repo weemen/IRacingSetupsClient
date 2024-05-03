@@ -22,6 +22,7 @@ def startup():
             # if we are, then process data
             if state.ir_connected:
                 logging.info("Connect to iracing")
+                logging.info(ir['WeekendInfo'])
             else:
                 logging.info("failed to connect to iracing")
 
