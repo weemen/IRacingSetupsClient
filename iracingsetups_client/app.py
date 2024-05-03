@@ -1,16 +1,14 @@
-import asyncio
 import logging
 import logging.config
 import time
 
 import irsdk
-import uvloop
 
 from iracingsetups_client.config import environment, config
 from iracingsetups_client.iracing.helpers import State, check_iracing
 
 
-async def startup():
+def startup():
     logging.info("Starting IRacingSetups client - environment %s", environment)
 
     ir = irsdk.IRSDK()
@@ -44,8 +42,7 @@ async def startup():
 
 def main():
     logging.config.dictConfig(config)
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    asyncio.run(startup())
+    startup()
 
 
 if __name__ == "__main__":
