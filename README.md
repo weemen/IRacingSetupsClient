@@ -8,3 +8,6 @@ This is an experimental client app that will push telemetry data to a server app
     - Poetry
 3. Run `poetry install --no-root` to install the dependencies
 4. Run `poetry run app` to start the app
+
+### Create the protobuf files
+Run `make grpc_schemas` to generate the new or updated classes

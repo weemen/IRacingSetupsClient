@@ -1,0 +1,181 @@
+syntax = "proto3";
+
+// IracingService definition
+service IracingService {
+  rpc SendLap (SendLapRequest) returns (SucessReply) {}
+}
+
+message SendLapRequest {
+  string userId = 1;
+  TrackMessage track = 2;
+  DriveMessage driver = 3;
+  CarSetup carSetup = 4;
+  SplitTimeInfo splitTimeInfo = 5;
+  Telemetry telemetry = 6;
+}
+
+message TrackMessage {
+  string id = 1;
+  string name = 2;
+  string configName = 3;
+  string city = 4;
+  string country = 5;
+  GPSTrack trackGps = 6;
+  string length = 7;
+  string turns = 8;
+}
+
+message GPSTrack {
+  string trackGpsLat = 1;
+  string trackGpsLong = 2;
+  string trackGpsAlt = 3;
+}
+
+message DriveMessage {
+  string driverId = 1;
+  string driverName = 2;
+  string driverCar = 3;
+  string driverCarId = 4;
+  string driverTeamId = 5;
+  string driverSetupName = 6;
+}
+
+
+message CarSetup {
+  Chassis chassis = 1;
+  Drivetrain drivetrain = 2;
+  TyresAero tyresAero = 3;
+}
+
+message Chassis {
+  ChassisFront chassisFront = 1;
+  ChassisFrontSide chassisLeftFront = 2;
+  ChassisFrontSide chassisRightFront = 3;
+  ChassisRear chassisRear = 4;
+  ChassisRearSide chassisLeftRear = 5;
+  ChassisRearSide chassisRightRear = 6;
+}
+
+message ChassisFront {
+  string arbBlades = 1;
+  string arbDriveArmLength = 2;
+  string arbSize = 3;
+  string brakePressureBias = 4;
+  string crossWeight = 5;
+  string displayPage = 6;
+  string frontMasterCylinder = 7;
+  string heaveDamperDefl = 8;
+  string heavePerchOffset = 9;
+  string heaveSpring = 10;
+  string heaveSpringDefl = 11;
+  string pushrodLengthOffset = 12;
+  string rearMasterCylinder = 13;
+}
+
+message ChassisFrontSide {
+  string camber = 1;
+  string caster = 2;
+  string compDamping = 3;
+  string cornerWeight = 4;
+  string rbdDamping = 5;
+  string rideHeight = 6;
+  string shockDefl = 7;
+  string springDefl = 8;
+  string toeIn = 9;
+  string torsionBarOD = 10;
+  string torsionBarPreload = 11;
+}
+
+message ChassisRear {
+  string arbDriveArmLength = 1;
+  string arbSize = 2;
+  string fuelLevel = 3;
+  string pushrodLengthOffset = 4;
+  string thirdDamperDefl = 5;
+  string thirdPerchOffset = 6;
+  string thirdSpring = 7;
+  string thirdSpringDefl = 8;
+}
+
+message ChassisRearSide {
+  string camber = 1;
+  string compDamping = 2;
+  string cornerWeight = 3;
+  string cbdDamping = 4;
+  string rideHeight = 5;
+  string shockDefl = 6;
+  string springDefl = 7;
+  string springPerchOffset = 8;
+  string springRate = 9;
+  string toeIn = 10;
+}
+
+message Drivetrain {
+  DrivetrainDiff drivetrainDiff = 1;
+  DrivetrainDt drivetrainDt = 2;
+}
+
+message DrivetrainDiff {
+  string diffClutchFrictionFaces = 1;
+  string diffPreload = 2;
+  string diffRampAngles = 3;
+}
+
+message DrivetrainDt {
+  string firstGear = 1;
+  string secondGear = 2;
+  string thirdGear = 3;
+  string fourthGear = 4;
+  string fifthGear = 5;
+  string sixthGear = 6;
+}
+
+message TyresAero {
+  AeroSetup aeroSetup = 1;
+  AeroTyre aeroTyreLeftFront = 2;
+  AeroTyre aeroTyreRightFront = 3;
+  AeroTyre aeroTyreLeftRear = 4;
+  AeroTyre aeroTyreRightRear = 5;
+
+}
+
+message AeroSetup {
+  string aeroPackage = 1;
+  string frontFlapAngle = 2;
+  string frontFlapConfiguration = 3;
+  string frontFlapGurneyFlap = 4;
+  string rearBeamWingAngle = 5;
+  string rearUpperFlapAngle = 6;
+}
+
+message AeroTyre {
+  string coldPressure = 1;
+  string lastHotPressure = 2;
+  string lastTempsOMI = 3;
+  string treadRemaining = 4;
+}
+
+message SplitTimeInfo {
+  repeated Sector sectors = 1;
+}
+
+message Sector {
+  string sectorNum = 1;
+  string SectorStartPct = 2;
+}
+
+message Telemetry {
+  string lap = 1;
+  string lapCompleted = 2;
+  string lapCurrentLapTime = 3;
+  string lapDeltaToBestLap = 4;
+  string lapDist = 5;
+  string lapDistPct = 6;
+  string lapLastLapTime = 7;
+  string playerCarMyIncidentCount = 8;
+  string playerCarTeamIncidentCount = 9;
+}
+
+message SucessReply {
+  string message = 1;
+}
