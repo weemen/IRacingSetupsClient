@@ -12,7 +12,7 @@ message SendNewSessionRequest {
   string userId = 1;
   string sessionId = 2;
   TrackMessage track = 3;
-  DriveMessage driver = 4;
+  DriverMessage driver = 4;
 }
 
 message SendCarSetupRequest {
@@ -38,7 +38,7 @@ message GPSTrack {
   string trackGpsAlt = 3;
 }
 
-message DriveMessage {
+message DriverMessage {
   string driverId = 1;
   string driverName = 2;
   string driverCar = 3;

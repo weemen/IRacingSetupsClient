@@ -73,7 +73,7 @@ def startup():
                                 length=ir['WeekendInfo']['TrackLength'],
                                 turns=ir['WeekendInfo']['TrackNumTurns'],
                             ),
-                            driver=iracing_pb2.DriveMessage(
+                            driver=iracing_pb2.DriverMessage(
                                 driverId=ir['DriverInfo']['Drivers'][0]['UserID'],
                                 driverName=ir['DriverInfo']['Drivers'][0]['UserName'],
                                 driverCar=ir['DriverInfo']['Drivers'][0]['CarScreenName'],
