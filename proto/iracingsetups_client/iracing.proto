@@ -2,16 +2,23 @@ syntax = "proto3";
 
 // IracingService definition
 service IracingService {
-  rpc SendLap (SendLapRequest) returns (SucessReply) {}
+  rpc SendNewSession (SendNewSessionRequest) returns (SucessReply) {}
+  rpc SendCarSetup (SendCarSetupRequest) returns (SucessReply) {}
+  rpc SendTelemetry (SendTelemetryRequest) returns (SucessReply) {}
+  rpc SendTyreData (SendTyreDataRequest) returns (SucessReply) {}
 }
 
-message SendLapRequest {
+message SendNewSessionRequest {
   string userId = 1;
-  TrackMessage track = 2;
-  DriveMessage driver = 3;
-  CarSetup carSetup = 4;
-  SplitTimeInfo splitTimeInfo = 5;
-  Telemetry telemetry = 6;
+  string sessionId = 2;
+  TrackMessage track = 3;
+  DriveMessage driver = 4;
+}
+
+message SendCarSetupRequest {
+  string userId = 1;
+  string sessionId = 2;
+  CarSetup carSetup = 3;
 }
 
 message TrackMessage {
@@ -89,12 +96,13 @@ message ChassisFrontSide {
 message ChassisRear {
   string arbDriveArmLength = 1;
   string arbSize = 2;
-  string fuelLevel = 3;
-  string pushrodLengthOffset = 4;
-  string thirdDamperDefl = 5;
-  string thirdPerchOffset = 6;
-  string thirdSpring = 7;
-  string thirdSpringDefl = 8;
+  string brakePressureBias= 3;
+  string fuelLevel = 4;
+  string pushrodLengthOffset = 5;
+  string thirdDamperDefl = 6;
+  string thirdPerchOffset = 7;
+  string thirdSpring = 8;
+  string thirdSpringDefl = 9;
 }
 
 message ChassisRearSide {
@@ -164,18 +172,29 @@ message Sector {
   string SectorStartPct = 2;
 }
 
-message Telemetry {
-  string lap = 1;
-  string lapCompleted = 2;
-  string lapCurrentLapTime = 3;
-  string lapDeltaToBestLap = 4;
-  string lapDist = 5;
-  string lapDistPct = 6;
-  string lapLastLapTime = 7;
-  string playerCarMyIncidentCount = 8;
-  string playerCarTeamIncidentCount = 9;
+message SendTelemetryRequest {
+  string userId = 1;
+  string sessionId = 2;
+  string lap = 3;
+  string lapCompleted = 4;
+  string lapCurrentLapTime = 5;
+  string lapDeltaToBestLap = 6;
+  string lapDist = 7;
+  string lapDistPct = 8;
+  string lapLastLapTime = 9;
+  string playerCarMyIncidentCount = 10;
+  string playerCarTeamIncidentCount = 11;
+  string brakeBias = 12;
+  string sector = 13;
+  string isOnTrack = 14;
+  string isInPit = 15;
+  string isInGarage = 16;
 }
 
+message SendTyreDataRequest {
+  string userId = 1;
+  string sessionId = 2;
+}
 message SucessReply {
   string message = 1;
 }
