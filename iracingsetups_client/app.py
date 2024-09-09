@@ -51,16 +51,16 @@ def startup():
             # if we are, then process data
             if state.ir_connected:
                 logging.info("Connect to iracing")
-                host = "localhost:50051"
+                host = "192.168.178.70:9001"
                 with grpc.aio.insecure_channel(host) as channel:
                     stub = IracingServiceStub(channel)
                     try:
                         response = stub.SendNewSession(
                             iracing_pb2.SendNewSessionRequest(
                             userId="898674",
-                            session_id=state.session_unique_id,
+                            session_id=ir['WeekendInfo']['SessionID'],
                             track=iracing_pb2.TrackMessage(
-                                id=ir['WeekendInfo']['TrackID'],
+                                trackId=ir['WeekendInfo']['TrackID'],
                                 name=f"{ir['WeekendInfo']['TrackDisplayName']} ({ir['WeekendInfo']['TrackName']})",
                                 configName=ir['WeekendInfo']['TrackConfigName'],
                                 city=ir['WeekendInfo']['TrackCity'],

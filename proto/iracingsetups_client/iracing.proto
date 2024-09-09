@@ -23,7 +23,7 @@ message SendCarSetupRequest {
 }
 
 message TrackMessage {
-  string id = 1;
+  string trackId = 1;
   string name = 2;
   string configName = 3;
   string city = 4;
