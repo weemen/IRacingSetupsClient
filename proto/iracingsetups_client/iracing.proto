@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+
 // IracingService definition
 service IracingService {
   rpc SendNewSession (SendNewSessionRequest) returns (SucessReply) {}
@@ -51,7 +52,7 @@ message DriverMessage {
 message CarSetup {
   Chassis chassis = 1;
   Drivetrain drivetrain = 2;
-  TyresAero tyresAero = 3;
+  AeroTyres tyresAero = 3;
 }
 
 message Chassis {
@@ -138,7 +139,7 @@ message DrivetrainDt {
   string sixthGear = 6;
 }
 
-message TyresAero {
+message AeroTyres {
   AeroSetup aeroSetup = 1;
   AeroTyre aeroTyreLeftFront = 2;
   AeroTyre aeroTyreRightFront = 3;
@@ -175,17 +176,17 @@ message Sector {
 message SendTelemetryRequest {
   string userId = 1;
   string sessionId = 2;
-  string lap = 3;
-  string lapCompleted = 4;
-  string lapCurrentLapTime = 5;
+  int32 lap = 3;
+  int32 lapCompleted = 4;
+  float lapCurrentLapTime = 5;
   string lapDeltaToBestLap = 6;
   string lapDist = 7;
   string lapDistPct = 8;
-  string lapLastLapTime = 9;
+  float lapLastLapTime = 9;
   string playerCarMyIncidentCount = 10;
   string playerCarTeamIncidentCount = 11;
   string brakeBias = 12;
-  string sector = 13;
+  int32 sector = 13;
   string isOnTrack = 14;
   string isInPit = 15;
   string isInGarage = 16;
