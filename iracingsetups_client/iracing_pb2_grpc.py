@@ -41,22 +41,22 @@ class IracingServiceStub(object):
             channel: A grpc.Channel.
         """
         self.SendNewSession = channel.unary_unary(
-                '/IracingService/SendNewSession',
+                '/iracingsetups.IracingService/SendNewSession',
                 request_serializer=iracingsetups__client_dot_iracing__pb2.SendNewSessionRequest.SerializeToString,
                 response_deserializer=iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
                 _registered_method=True)
         self.SendCarSetup = channel.unary_unary(
-                '/IracingService/SendCarSetup',
+                '/iracingsetups.IracingService/SendCarSetup',
                 request_serializer=iracingsetups__client_dot_iracing__pb2.SendCarSetupRequest.SerializeToString,
                 response_deserializer=iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
                 _registered_method=True)
         self.SendTelemetry = channel.unary_unary(
-                '/IracingService/SendTelemetry',
+                '/iracingsetups.IracingService/SendTelemetry',
                 request_serializer=iracingsetups__client_dot_iracing__pb2.SendTelemetryRequest.SerializeToString,
                 response_deserializer=iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
                 _registered_method=True)
         self.SendTyreData = channel.unary_unary(
-                '/IracingService/SendTyreData',
+                '/iracingsetups.IracingService/SendTyreData',
                 request_serializer=iracingsetups__client_dot_iracing__pb2.SendTyreDataRequest.SerializeToString,
                 response_deserializer=iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
                 _registered_method=True)
@@ -115,9 +115,9 @@ def add_IracingServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'IracingService', rpc_method_handlers)
+            'iracingsetups.IracingService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('IracingService', rpc_method_handlers)
+    server.add_registered_method_handlers('iracingsetups.IracingService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -139,7 +139,7 @@ class IracingService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/IracingService/SendNewSession',
+            '/iracingsetups.IracingService/SendNewSession',
             iracingsetups__client_dot_iracing__pb2.SendNewSessionRequest.SerializeToString,
             iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
             options,
@@ -166,7 +166,7 @@ class IracingService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/IracingService/SendCarSetup',
+            '/iracingsetups.IracingService/SendCarSetup',
             iracingsetups__client_dot_iracing__pb2.SendCarSetupRequest.SerializeToString,
             iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
             options,
@@ -193,7 +193,7 @@ class IracingService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/IracingService/SendTelemetry',
+            '/iracingsetups.IracingService/SendTelemetry',
             iracingsetups__client_dot_iracing__pb2.SendTelemetryRequest.SerializeToString,
             iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
             options,
@@ -220,7 +220,7 @@ class IracingService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/IracingService/SendTyreData',
+            '/iracingsetups.IracingService/SendTyreData',
             iracingsetups__client_dot_iracing__pb2.SendTyreDataRequest.SerializeToString,
             iracingsetups__client_dot_iracing__pb2.SucessReply.FromString,
             options,
