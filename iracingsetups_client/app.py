@@ -52,7 +52,7 @@ def startup():
             if state.ir_connected:
                 logging.info("Connect to iracing")
                 host = "192.168.178.70:9001"
-                with grpc.aio.insecure_channel(host) as channel:
+                with grpc.insecure_channel(host) as channel:
                     stub = IracingServiceStub(channel)
                     try:
                         response = stub.SendNewSession(
