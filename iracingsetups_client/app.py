@@ -58,9 +58,9 @@ def startup():
                         response = stub.SendNewSession(
                             iracing_pb2.SendNewSessionRequest(
                             userId="898674",
-                            session_id=ir['WeekendInfo']['SessionID'],
+                            sessionId=str(ir['WeekendInfo']['SessionID']),
                             track=iracing_pb2.TrackMessage(
-                                trackId=ir['WeekendInfo']['TrackID'],
+                                trackId=str(ir['WeekendInfo']['TrackID']),
                                 name=f"{ir['WeekendInfo']['TrackDisplayName']} ({ir['WeekendInfo']['TrackName']})",
                                 configName=ir['WeekendInfo']['TrackConfigName'],
                                 city=ir['WeekendInfo']['TrackCity'],
@@ -68,17 +68,17 @@ def startup():
                                 trackGps=iracing_pb2.GPSTrack(
                                     trackGpsLat=ir['WeekendInfo']['TrackLatitude'],
                                     trackGpsLong=ir['WeekendInfo']['TrackLongitude'],
-                                    trackGpsAlt=ir['WeekendInfo']['TrackAltitude'],
+                                    trackGpsAlt=ir['WeekendInfo']['TrackAltitude']
                                 ),
                                 length=ir['WeekendInfo']['TrackLength'],
-                                turns=ir['WeekendInfo']['TrackNumTurns'],
+                                turns=str(ir['WeekendInfo']['TrackNumTurns'])
                             ),
                             driver=iracing_pb2.DriverMessage(
-                                driverId=ir['DriverInfo']['Drivers'][0]['UserID'],
+                                driverId=str(ir['DriverInfo']['Drivers'][0]['UserID']),
                                 driverName=ir['DriverInfo']['Drivers'][0]['UserName'],
                                 driverCar=ir['DriverInfo']['Drivers'][0]['CarScreenName'],
-                                driverCarId=ir['DriverInfo']['Drivers'][0]['CarID'],
-                                driverTeamId=ir['DriverInfo']['Drivers'][0]['TeamID'],
+                                driverCarId=str(ir['DriverInfo']['Drivers'][0]['CarID']),
+                                driverTeamId=str(ir['DriverInfo']['Drivers'][0]['TeamID']),
                                 driverSetupName=ir['DriverInfo']['Drivers'][0]['DriverSetupName'],
                             )
                         ))
