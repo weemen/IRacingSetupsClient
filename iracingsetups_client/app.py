@@ -16,6 +16,7 @@ from iracingsetups_client.iracing_pb2_grpc import IracingServiceStub
 @dataclass
 class SessionState:
     """Tracks the state of the current iRacing session"""
+    ir_connected = False
     is_registered: bool = False
     car_setup_sent: bool = False
     is_on_track: bool = False
@@ -48,7 +49,7 @@ class IRacingClient:
 
     def register_session(self) -> bool:
         """Registers a new session with the server"""
-        if not self.ir.is_connected:
+        if not self.state.is_connected:
             return False
         logging.info("Connection to iRacing established")
         try:
@@ -86,7 +87,7 @@ class IRacingClient:
 
     def send_car_setup(self) -> bool:
         """Sends the current car setup to the server"""
-        if not self.ir.is_connected:
+        if not self.state.is_connected:
             return False
 
         try:
@@ -116,7 +117,7 @@ class IRacingClient:
 
     def send_telemetry(self) -> bool:
         """Sends telemetry data to the server"""
-        if not self.ir.is_connected:
+        if not self.state.is_connected:
             return False
 
         try:
@@ -254,7 +255,7 @@ class IRacingClient:
 
     def update_session_state(self):
         """Updates the session state based on current iRacing data"""
-        if not self.ir.is_connected:
+        if not self.state.is_connected:
             return
 
         # Update on-track state
@@ -274,6 +275,12 @@ class IRacingClient:
 
         self.state.current_lap = current_lap
 
+    def check_iracing(self):
+        """Checks if iRacing is running"""
+        if not self.state.ir_connected and self.ir.startup() and self.ir.is_initialized and self.ir.is_connected:
+            self.state.ir_connected = True
+            logging.info('irsdk connected')
+
     def run(self):
         """Main loop for the iRacing client"""
         logging.info("Starting IRacingSetups client - environment %s", environment)
@@ -281,7 +288,7 @@ class IRacingClient:
         while True:
             try:
                 # Check if iRacing is running
-                if self.ir.is_connected:
+                if self.state.is_connected:
                     # Connect to gRPC if not already connected
                     logging.info("iRacing is running")
                     if not self.channel:
@@ -312,10 +319,12 @@ class IRacingClient:
 
                 else:
                     # Disconnect from gRPC if iRacing is not running
-                    logging.info("iRacing is not running")
+                    logging.info("iRacing is not running") 
                     self.disconnect_from_grpc()
                     # Reset session state
                     self.state = SessionState()
+
+                    self.check_iracing()
 
                 # Sleep to prevent excessive CPU usage
                 time.sleep(0.1)
