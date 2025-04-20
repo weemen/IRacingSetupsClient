@@ -85,7 +85,7 @@ class IRacingClient:
             )
             
             response = self.stub.SendNewSession(request)
-            return response.message == "Success"
+            return response.message == "Racing session created"
         except Exception as e:
             logging.error(f"Failed to register session: {e}")
             return False
