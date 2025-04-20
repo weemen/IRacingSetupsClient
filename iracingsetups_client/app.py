@@ -258,19 +258,28 @@ class IRacingClient:
             treadRemaining=str(self.ir['CarSetup']['TyresAero'][position]['TreadRemaining'])
         )
 
+    def _return_current_sector(sectors: List[Dict[str, Any]], current_percentage: float) -> int:
+        """Returns the current sector based on the percentage of the lap"""
+        for sector in sectors:
+            if current_percentage <= sector['SectorStartPct']:
+                return sector['Number']
+        return len(sectors)
+
+
     def update_session_state(self):
         """Updates the session state based on current iRacing data"""
         if not self.state.is_connected:
             return
 
         # Update on-track state
-        self.state.is_on_track = bool(self.ir['IsOnTrack']) and not bool(self.ir['IsInPit'])
+        self.state.is_on_track = self.ir['IsOnTrack']
         if not self.state.is_on_track:
             logging.info("Not on track")
             return
+        
         # Update lap and sector information
         current_lap = self.ir['Lap']
-        current_sector = self.ir['Sector']
+        current_sector = self._return_current_sector(self.ir['SplitTimeInfo']['Sectors'], self.ir['LapDistPct'])
 
         # Check if outlap is completed (first lap after pit)
         if current_lap > self.state.current_lap and self.state.current_lap == 0:
