@@ -55,7 +55,6 @@ class IRacingClient:
         try:
             # Generate a new UUID for this session
             self.state.session_id = str(uuid.uuid4())
-            logging.info(self.ir['DriverInfo'])
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
                 userId="898674",  # TODO: Make this configurable
@@ -85,6 +84,7 @@ class IRacingClient:
             )
             
             response = self.stub.SendNewSession(request)
+            logging.info("Response registration:" +response.message)
             return response.message == "Racing session created"
         except Exception as e:
             logging.error(f"Failed to register session: {e}")
@@ -308,8 +308,6 @@ class IRacingClient:
                         if self.register_session():
                             self.state.is_registered = True
                             logging.info(f"Session registered successfully with ID: {self.state.session_id}")
-                        else:
-                            sys.exit(1)
 
                     # Update session state
                     self.update_session_state()
