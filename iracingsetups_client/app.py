@@ -1,6 +1,7 @@
 import logging
 import logging.config
 import time
+import uuid
 from dataclasses import dataclass
 from typing import Optional
 
@@ -21,6 +22,7 @@ class SessionState:
     outlap_completed: bool = False
     last_sector: int = 0
     current_lap: int = 0
+    session_id: str = ""  # Store the UUID for the current session
 
 
 class IRacingClient:
@@ -50,10 +52,13 @@ class IRacingClient:
             return False
 
         try:
+            # Generate a new UUID for this session
+            self.state.session_id = str(uuid.uuid4())
+            
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
                 userId="898674",  # TODO: Make this configurable
-                sessionId=str(int(time.time())),
+                sessionId=self.state.session_id,
                 track=iracing_pb2.TrackMessage(
                     trackId=str(self.ir['WeekendInfo']['TrackID']),
                     name=self.ir['WeekendInfo']['TrackDisplayName'],
@@ -88,7 +93,7 @@ class IRacingClient:
             # Create car setup request
             request = iracing_pb2.SendCarSetupRequest(
                 userId="898674",  # TODO: Make this configurable
-                sessionId=str(int(time.time())),
+                sessionId=self.state.session_id,  # Use the same session ID
                 carSetup=iracing_pb2.CarSetup(
                     chassis=iracing_pb2.Chassis(
                         chassisFront=self._create_chassis_front(),
@@ -117,7 +122,7 @@ class IRacingClient:
         try:
             request = iracing_pb2.SendTelemetryRequest(
                 userId="898674",  # TODO: Make this configurable
-                sessionId=str(int(time.time())),
+                sessionId=self.state.session_id,  # Use the same session ID
                 lap=self.ir['Lap'],
                 lapCompleted=self.ir['LapCompleted'],
                 lapCurrentLapTime=self.ir['LapCurrentLapTime'],
@@ -288,7 +293,7 @@ class IRacingClient:
                     if not self.state.is_registered:
                         if self.register_session():
                             self.state.is_registered = True
-                            logging.info("Session registered successfully")
+                            logging.info(f"Session registered successfully with ID: {self.state.session_id}")
 
                     # Send car setup if session is registered and setup hasn't been sent
                     if self.state.is_registered and not self.state.car_setup_sent:
