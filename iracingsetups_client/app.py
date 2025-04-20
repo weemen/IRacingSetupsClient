@@ -20,6 +20,7 @@ class SessionState:
     is_registered: bool = False
     car_setup_sent: bool = False
     is_on_track: bool = False
+    is_in_pit: bool = False
     outlap_completed: bool = False
     last_sector: int = 0
     current_lap: int = 0
@@ -141,7 +142,7 @@ class IRacingClient:
                 brakeBias=str(self.ir['BrakeBias']),
                 sector=self.ir['Sector'],
                 isOnTrack=str(self.ir['IsOnTrack']),
-                isInPit=str(self.ir['IsInPit']),
+                isInPit=str(self.state.is_in_pit),
                 isInGarage=str(self.ir['IsInGarage'])
             )
             
@@ -275,6 +276,8 @@ class IRacingClient:
 
         # Update on-track state
         self.state.is_on_track = self.ir['IsOnTrack'] and not self.ir['OnPitRoad']
+        self.state.is_in_pit = self.ir['IsOnTrack'] and self.ir['OnPitRoad']
+    
         if not self.state.is_on_track:
             logging.info("Not on track")
             return
