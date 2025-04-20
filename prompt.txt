@@ -1,0 +1,29 @@
+Hello Agent,
+
+Can you refactor the iracing app which makes use of the iRacing API in such a way so that:
+
+1. The application does not crash even if Iracing is not running.
+2. When Iracing is started it will register a new session over gRPC. This is a one time action!
+All messages that we send over grpc have the same uuidv4 as the one that has been used upon registering 
+the session. All sessions registered sessions have unique uuidv4.
+
+3. After the session is registered we want to send the carSetup over gRPC. We only send the carSetup 
+in the following situations:
+
+a: It only happens when the session is registered
+b: It's a one time action
+
+In the Iracing.proto file you can see how the SendCarSetupRequest should look like. 
+
+
+After we have send CarSetup the app needs start tracing telemetry. SendTelemetryRequest in 
+the Iracing.proto file describes how this message show look like. The send telemetry request
+will only be send in the following situations.
+
+a: The player must be on Track
+b: The player must have completed his outlap
+c: The player must have completed a sector.
+
+
+The app must be written in python. 
+
