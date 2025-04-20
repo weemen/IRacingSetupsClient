@@ -16,7 +16,7 @@ from iracingsetups_client.iracing_pb2_grpc import IracingServiceStub
 @dataclass
 class SessionState:
     """Tracks the state of the current iRacing session"""
-    ir_connected = False
+    is_connected = False
     is_registered: bool = False
     car_setup_sent: bool = False
     is_on_track: bool = False
@@ -277,8 +277,8 @@ class IRacingClient:
 
     def check_iracing(self):
         """Checks if iRacing is running"""
-        if not self.state.ir_connected and self.ir.startup() and self.ir.is_initialized and self.ir.is_connected:
-            self.state.ir_connected = True
+        if not self.state.is_connected and self.ir.startup() and self.ir.is_initialized and self.ir.is_connected:
+            self.state.is_connected = True
             logging.info('irsdk connected')
 
     def run(self):
