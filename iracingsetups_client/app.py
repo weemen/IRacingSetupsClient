@@ -260,7 +260,9 @@ class IRacingClient:
 
         # Update on-track state
         self.state.is_on_track = bool(self.ir['IsOnTrack']) and not bool(self.ir['IsInPit'])
-
+        if not self.state.is_on_track:
+            logging.info("Not on track")
+            return
         # Update lap and sector information
         current_lap = self.ir['Lap']
         current_sector = self.ir['Sector']
@@ -294,9 +296,7 @@ class IRacingClient:
                     if not self.channel:
                         self.connect_to_grpc()
                     logging.info("Connected to gRPC")
-                    # Update session state
-                    self.update_session_state()
-                    logging.info("Session state updated")
+                    
                     # Register session if not already registered
                     if not self.state.is_registered:
                         logging.info("Registering session")
@@ -304,6 +304,10 @@ class IRacingClient:
                             self.state.is_registered = True
                             logging.info(f"Session registered successfully with ID: {self.state.session_id}")
 
+                    # Update session state
+                    self.update_session_state()
+                    logging.info("Session state updated")
+                    
                     # Send car setup if session is registered and setup hasn't been sent
                     if self.state.is_registered and not self.state.car_setup_sent:
                         logging.info("Sending car setup")
