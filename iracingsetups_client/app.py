@@ -73,7 +73,7 @@ class IRacingClient:
                     configName=self.ir['WeekendInfo']['TrackConfigName'],
                     city=self.ir['WeekendInfo']['TrackCity'],
                     country=self.ir['WeekendInfo']['TrackCountry'],
-                    trackgps=iracing_pb2.GPSTrack(
+                    trackGps=iracing_pb2.GPSTrack(
                         trackGpsLat=self.ir['WeekendInfo']['TrackLatitude'],
                         trackGpsLong=self.ir['WeekendInfo']['TrackLongitude'],
                         trackGpsAlt=self.ir['WeekendInfo']['TrackAltitude']
