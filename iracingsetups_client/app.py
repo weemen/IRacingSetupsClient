@@ -157,7 +157,7 @@ class IRacingClient:
             arbBlades=str(self.ir['CarSetup']['Chassis']['Front']['ArbBlades']),
             arbDriveArmLength=str(self.ir['CarSetup']['Chassis']['Front']['ArbDriveArmLength']),
             arbSize=str(self.ir['CarSetup']['Chassis']['Front']['ArbSize']),
-            brakePressureBias=str(self.ir['CarSetup']['Chassis']['Front']['BrakePressureBias']),
+            brakePressureBias=self.ir['CarSetup']['Chassis']['Front']['BrakePressureBias'],
             crossWeight=str(self.ir['CarSetup']['Chassis']['Front']['CrossWeight']),
             displayPage=str(self.ir['CarSetup']['Chassis']['Front']['DisplayPage']),
             frontMasterCylinder=str(self.ir['CarSetup']['Chassis']['Front']['FrontMasterCylinder']),
@@ -187,10 +187,12 @@ class IRacingClient:
 
     def _create_chassis_rear(self) -> iracing_pb2.ChassisRear:
         """Creates the rear chassis data"""
+        bb_front = self.ir['CarSetup']['Chassis']['Front']['BrakePressureBias'].replace('%', '')
+        bb_rear = str(100.0 - float(bb_front))+ "%"
         return iracing_pb2.ChassisRear(
             arbDriveArmLength=str(self.ir['CarSetup']['Chassis']['Rear']['ArbDriveArmLength']),
             arbSize=str(self.ir['CarSetup']['Chassis']['Rear']['ArbSize']),
-            brakePressureBias=str(self.ir['CarSetup']['Chassis']['Rear']['BrakePressureBias']),
+            brakePressureBias=bb_rear
             fuelLevel=str(self.ir['CarSetup']['Chassis']['Rear']['FuelLevel']),
             pushrodLengthOffset=str(self.ir['CarSetup']['Chassis']['Rear']['PushrodLengthOffset']),
             thirdDamperDefl=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdDamperDefl']),
@@ -258,11 +260,11 @@ class IRacingClient:
             treadRemaining=str(self.ir['CarSetup']['TyresAero'][position]['TreadRemaining'])
         )
 
-    def _return_current_sector(sectors: List[Dict[str, Any]], current_percentage: float) -> int:
+    def _return_current_sector(self, sectors, current_percentage) -> int:
         """Returns the current sector based on the percentage of the lap"""
         for sector in sectors:
             if current_percentage <= sector['SectorStartPct']:
-                return sector['Number']
+                return sector['SectorNum']
         return len(sectors)
 
 
