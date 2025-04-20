@@ -55,8 +55,7 @@ class IRacingClient:
         try:
             # Generate a new UUID for this session
             self.state.session_id = str(uuid.uuid4())
-            
-
+        
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
                 userId="898674",  # TODO: Make this configurable
@@ -304,6 +303,8 @@ class IRacingClient:
                         if self.register_session():
                             self.state.is_registered = True
                             logging.info(f"Session registered successfully with ID: {self.state.session_id}")
+                        else:
+                            continue
 
                     # Update session state
                     self.update_session_state()
