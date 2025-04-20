@@ -55,14 +55,7 @@ class IRacingClient:
         try:
             # Generate a new UUID for this session
             self.state.session_id = str(uuid.uuid4())
-            logging.info(self.ir['WeekendInfo'])
-            logging.info(self.ir['WeekendInfo']['TrackID'])
-            logging.info(self.ir['WeekendInfo']['TrackDisplayName'])
-            logging.info(self.ir['WeekendInfo']['TrackConfigName'])
-            logging.info(self.ir['WeekendInfo']['TrackCity'])
-            logging.info(self.ir['WeekendInfo']['TrackCountry'])
-            logging.info(self.ir['WeekendInfo']['TrackLength'])
-            logging.info(self.ir['WeekendInfo']['TrackNumTurns'])
+            logging.info(self.ir['DriverInfo'])
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
                 userId="898674",  # TODO: Make this configurable
