@@ -37,7 +37,7 @@ class IRacingClient:
     def connect_to_grpc(self):
         """Establishes gRPC connection"""
         if not self.channel:
-            self.channel = grpc.insecure_channel(self.host, compression=grpc.Compression.Deflate)
+            self.channel = grpc.insecure_channel(self.host, compression=grpc.Compression.Gzip)
             self.stub = IracingServiceStub(self.channel)
 
     def disconnect_from_grpc(self):
