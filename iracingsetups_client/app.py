@@ -56,6 +56,7 @@ class IRacingClient:
             # Generate a new UUID for this session
             self.state.session_id = str(uuid.uuid4())
             
+
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
                 userId="898674",  # TODO: Make this configurable
@@ -67,7 +68,7 @@ class IRacingClient:
                     city=self.ir['WeekendInfo']['TrackCity'],
                     country=self.ir['WeekendInfo']['TrackCountry'],
                     length=self.ir['WeekendInfo']['TrackLength'],
-                    turns=self.ir['WeekendInfo']['TrackTurn']
+                    turns=self.ir['WeekendInfo']['TrackNumTurns']
                 ),
                 driver=iracing_pb2.DriverMessage(
                     driverId=str(self.ir['DriverInfo']['DriverUserID']),
@@ -307,7 +308,7 @@ class IRacingClient:
                     # Update session state
                     self.update_session_state()
                     logging.info("Session state updated")
-                    
+
                     # Send car setup if session is registered and setup hasn't been sent
                     if self.state.is_registered and not self.state.car_setup_sent:
                         logging.info("Sending car setup")
