@@ -192,7 +192,7 @@ class IRacingClient:
         return iracing_pb2.ChassisRear(
             arbDriveArmLength=str(self.ir['CarSetup']['Chassis']['Rear']['ArbDriveArmLength']),
             arbSize=str(self.ir['CarSetup']['Chassis']['Rear']['ArbSize']),
-            brakePressureBias=bb_rear
+            brakePressureBias=bb_rear,
             fuelLevel=str(self.ir['CarSetup']['Chassis']['Rear']['FuelLevel']),
             pushrodLengthOffset=str(self.ir['CarSetup']['Chassis']['Rear']['PushrodLengthOffset']),
             thirdDamperDefl=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdDamperDefl']),
@@ -207,7 +207,7 @@ class IRacingClient:
             camber=str(self.ir['CarSetup']['Chassis'][side]['Camber']),
             compDamping=str(self.ir['CarSetup']['Chassis'][side]['CompDamping']),
             cornerWeight=str(self.ir['CarSetup']['Chassis'][side]['CornerWeight']),
-            cbdDamping=str(self.ir['CarSetup']['Chassis'][side]['CbdDamping']),
+            rbdDamping=str(self.ir['CarSetup']['Chassis'][side]['RbdDamping']),
             rideHeight=str(self.ir['CarSetup']['Chassis'][side]['RideHeight']),
             shockDefl=str(self.ir['CarSetup']['Chassis'][side]['ShockDefl']),
             springDefl=str(self.ir['CarSetup']['Chassis'][side]['SpringDefl']),
