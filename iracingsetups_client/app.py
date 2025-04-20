@@ -272,7 +272,7 @@ class IRacingClient:
             return
 
         # Update on-track state
-        self.state.is_on_track = self.ir['IsOnTrack']
+        self.state.is_on_track = self.ir['IsOnTrack'] and not self.ir['OnPitRoad']
         if not self.state.is_on_track:
             logging.info("Not on track")
             return
