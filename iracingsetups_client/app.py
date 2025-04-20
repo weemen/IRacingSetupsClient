@@ -26,7 +26,7 @@ class SessionState:
 
 
 class IRacingClient:
-    def __init__(self, host: str = "192.168.178.70:9001"):
+    def __init__(self, host: str = "192.168.178.104:9001"):
         self.host = host
         self.ir = irsdk.IRSDK()
         self.state = SessionState()
@@ -50,7 +50,7 @@ class IRacingClient:
         """Registers a new session with the server"""
         if not self.ir.is_connected:
             return False
-
+        logging.info("Connection to iRacing established")
         try:
             # Generate a new UUID for this session
             self.state.session_id = str(uuid.uuid4())
