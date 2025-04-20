@@ -80,7 +80,7 @@ class IRacingClient:
                     driverCar=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarPath'],
                     driverCarId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarID']),
                     driverTeamId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['TeamID']),
-                    driverSetupName=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['SetupName']
+                    driverSetupName=self.ir['DriverInfo']['DriverSetupName']
                 )
             )
             
