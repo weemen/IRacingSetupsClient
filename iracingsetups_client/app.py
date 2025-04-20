@@ -71,7 +71,7 @@ class IRacingClient:
                         trackGpsLong=self.ir['WeekendInfo']['TrackLongitude'],
                         trackGpsAlt=self.ir['WeekendInfo']['TrackAltitude']
                     ),
-                    length=str(self.ir['WeekendInfo']['TrackLength'],
+                    length=str(self.ir['WeekendInfo']['TrackLength']),
                     turns=str(self.ir['WeekendInfo']['TrackNumTurns'])
                 ),
                 driver=iracing_pb2.DriverMessage(
