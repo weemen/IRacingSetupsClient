@@ -323,6 +323,13 @@ class IRacingClient:
 
 
 def main():
+    # Initialize logging configuration
+    logging.config.dictConfig(config)
+    
+    # Set the root logger level to INFO to ensure INFO messages are visible
+    logging.getLogger().setLevel(logging.INFO)
+    
+    # Create and run the client
     client = IRacingClient()
     client.run()
 
