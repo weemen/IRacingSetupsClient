@@ -71,12 +71,12 @@ class IRacingClient:
                         trackGpsLong=self.ir['WeekendInfo']['TrackLongitude'],
                         trackGpsAlt=self.ir['WeekendInfo']['TrackAltitude']
                     ),
-                    length=self.ir['WeekendInfo']['TrackLength'],
-                    turns=self.ir['WeekendInfo']['TrackNumTurns']
+                    length=str(self.ir['WeekendInfo']['TrackLength'],
+                    turns=str(self.ir['WeekendInfo']['TrackNumTurns'])
                 ),
                 driver=iracing_pb2.DriverMessage(
                     driverId=str(self.ir['DriverInfo']['DriverUserID']),
-                    driverName=self.ir['DriverInfo']['DriverUserName'],
+                    driverName=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['DriverUserName'],
                     driverCar=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarPath'],
                     driverCarId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarID']),
                     driverTeamId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['TeamID']),
