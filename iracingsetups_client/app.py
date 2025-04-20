@@ -1,271 +1,326 @@
 import logging
 import logging.config
 import time
-import pprint
+from dataclasses import dataclass
+from typing import Optional
 
 import grpc
 import irsdk
 
 import iracingsetups_client.iracing_pb2 as iracing_pb2
 from iracingsetups_client.config import environment, config
-from iracingsetups_client.iracing.helpers import State, check_iracing
 from iracingsetups_client.iracing_pb2_grpc import IracingServiceStub
 
-# set up pretty printer
-pp = pprint.PrettyPrinter(indent=2, sort_dicts=True)
+
+@dataclass
+class SessionState:
+    """Tracks the state of the current iRacing session"""
+    is_registered: bool = False
+    car_setup_sent: bool = False
+    is_on_track: bool = False
+    outlap_completed: bool = False
+    last_sector: int = 0
+    current_lap: int = 0
 
 
-def log_pretty(obj):
-    pretty_out = f"{pp.pformat(obj)}"
+class IRacingClient:
+    def __init__(self, host: str = "192.168.178.70:9001"):
+        self.host = host
+        self.ir = irsdk.IRSDK()
+        self.state = SessionState()
+        self.channel = None
+        self.stub = None
 
-    return f'{pretty_out}\n'
+    def connect_to_grpc(self):
+        """Establishes gRPC connection"""
+        if not self.channel:
+            self.channel = grpc.insecure_channel(self.host, compression=grpc.Compression.Deflate)
+            self.stub = IracingServiceStub(self.channel)
 
+    def disconnect_from_grpc(self):
+        """Closes gRPC connection"""
+        if self.channel:
+            self.channel.close()
+            self.channel = None
+            self.stub = None
 
-def startup():
-    logging.info("Starting IRacingSetups client - environment %s", environment)
+    def register_session(self) -> bool:
+        """Registers a new session with the server"""
+        if not self.ir.is_connected:
+            return False
 
-    ir = irsdk.IRSDK()
-    logging.info("irsdk initialized")
-    state = State()
-    current_info = {
-        "telemetry": dict(),
-    }
-    printed = False
+        try:
+            # Create session request
+            request = iracing_pb2.SendNewSessionRequest(
+                userId="898674",  # TODO: Make this configurable
+                sessionId=str(int(time.time())),
+                track=iracing_pb2.TrackMessage(
+                    trackId=str(self.ir['WeekendInfo']['TrackID']),
+                    name=self.ir['WeekendInfo']['TrackDisplayName'],
+                    configName=self.ir['WeekendInfo']['TrackConfigName'],
+                    city=self.ir['WeekendInfo']['TrackCity'],
+                    country=self.ir['WeekendInfo']['TrackCountry'],
+                    length=self.ir['WeekendInfo']['TrackLength'],
+                    turns=self.ir['WeekendInfo']['TrackTurn']
+                ),
+                driver=iracing_pb2.DriverMessage(
+                    driverId=str(self.ir['DriverInfo']['DriverUserID']),
+                    driverName=self.ir['DriverInfo']['DriverUserName'],
+                    driverCar=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarPath'],
+                    driverCarId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarID']),
+                    driverTeamId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['TeamID']),
+                    driverSetupName=self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['SetupName']
+                )
+            )
+            
+            response = self.stub.SendNewSession(request)
+            return response.message == "Success"
+        except Exception as e:
+            logging.error(f"Failed to register session: {e}")
+            return False
 
-    # TODO: initialization of some variables to minimize networking calls
-    # TODO: Figure out if brake bias changes in the car setup when changing bbal during a session
-    #  -> only front -> static -> dcBrakeBias
-    # TODO: Number of sector times is different per ciruit.
-    #  -> len over SplitTimeInfo.Sectors
-    # IsOnTrackCar
-    # IsInGarage
-    event_buffer = []
-    track_information_send = False
-    driver_information_send = False
+    def send_car_setup(self) -> bool:
+        """Sends the current car setup to the server"""
+        if not self.ir.is_connected:
+            return False
 
-    try:
-        # infinite loop
+        try:
+            # Create car setup request
+            request = iracing_pb2.SendCarSetupRequest(
+                userId="898674",  # TODO: Make this configurable
+                sessionId=str(int(time.time())),
+                carSetup=iracing_pb2.CarSetup(
+                    chassis=iracing_pb2.Chassis(
+                        chassisFront=self._create_chassis_front(),
+                        chassisLeftFront=self._create_chassis_front_side('LeftFront'),
+                        chassisRightFront=self._create_chassis_front_side('RightFront'),
+                        chassisRear=self._create_chassis_rear(),
+                        chassisLeftRear=self._create_chassis_rear_side('LeftRear'),
+                        chassisRightRear=self._create_chassis_rear_side('RightRear')
+                    ),
+                    drivetrain=self._create_drivetrain(),
+                    tyresAero=self._create_tyres_aero()
+                )
+            )
+            
+            response = self.stub.SendCarSetup(request)
+            return response.message == "Success"
+        except Exception as e:
+            logging.error(f"Failed to send car setup: {e}")
+            return False
+
+    def send_telemetry(self) -> bool:
+        """Sends telemetry data to the server"""
+        if not self.ir.is_connected:
+            return False
+
+        try:
+            request = iracing_pb2.SendTelemetryRequest(
+                userId="898674",  # TODO: Make this configurable
+                sessionId=str(int(time.time())),
+                lap=self.ir['Lap'],
+                lapCompleted=self.ir['LapCompleted'],
+                lapCurrentLapTime=self.ir['LapCurrentLapTime'],
+                lapDeltaToBestLap=str(self.ir['LapDeltaToBestLap']),
+                lapDist=str(self.ir['LapDist']),
+                lapDistPct=str(self.ir['LapDistPct']),
+                lapLastLapTime=self.ir['LapLastLapTime'],
+                playerCarMyIncidentCount=str(self.ir['PlayerCarMyIncidentCount']),
+                playerCarTeamIncidentCount=str(self.ir['PlayerCarTeamIncidentCount']),
+                brakeBias=str(self.ir['BrakeBias']),
+                sector=self.ir['Sector'],
+                isOnTrack=str(self.ir['IsOnTrack']),
+                isInPit=str(self.ir['IsInPit']),
+                isInGarage=str(self.ir['IsInGarage'])
+            )
+            
+            response = self.stub.SendTelemetry(request)
+            return response.message == "Success"
+        except Exception as e:
+            logging.error(f"Failed to send telemetry: {e}")
+            return False
+
+    def _create_chassis_front(self) -> iracing_pb2.ChassisFront:
+        """Creates the front chassis data"""
+        return iracing_pb2.ChassisFront(
+            arbBlades=str(self.ir['CarSetup']['Chassis']['Front']['ArbBlades']),
+            arbDriveArmLength=str(self.ir['CarSetup']['Chassis']['Front']['ArbDriveArmLength']),
+            arbSize=str(self.ir['CarSetup']['Chassis']['Front']['ArbSize']),
+            brakePressureBias=str(self.ir['CarSetup']['Chassis']['Front']['BrakePressureBias']),
+            crossWeight=str(self.ir['CarSetup']['Chassis']['Front']['CrossWeight']),
+            displayPage=str(self.ir['CarSetup']['Chassis']['Front']['DisplayPage']),
+            frontMasterCylinder=str(self.ir['CarSetup']['Chassis']['Front']['FrontMasterCylinder']),
+            heaveDamperDefl=str(self.ir['CarSetup']['Chassis']['Front']['HeaveDamperDefl']),
+            heavePerchOffset=str(self.ir['CarSetup']['Chassis']['Front']['HeavePerchOffset']),
+            heaveSpring=str(self.ir['CarSetup']['Chassis']['Front']['HeaveSpring']),
+            heaveSpringDefl=str(self.ir['CarSetup']['Chassis']['Front']['HeaveSpringDefl']),
+            pushrodLengthOffset=str(self.ir['CarSetup']['Chassis']['Front']['PushrodLengthOffset']),
+            rearMasterCylinder=str(self.ir['CarSetup']['Chassis']['Front']['RearMasterCylinder'])
+        )
+
+    def _create_chassis_front_side(self, side: str) -> iracing_pb2.ChassisFrontSide:
+        """Creates the front side chassis data"""
+        return iracing_pb2.ChassisFrontSide(
+            camber=str(self.ir['CarSetup']['Chassis'][side]['Camber']),
+            caster=str(self.ir['CarSetup']['Chassis'][side]['Caster']),
+            compDamping=str(self.ir['CarSetup']['Chassis'][side]['CompDamping']),
+            cornerWeight=str(self.ir['CarSetup']['Chassis'][side]['CornerWeight']),
+            rbdDamping=str(self.ir['CarSetup']['Chassis'][side]['RbdDamping']),
+            rideHeight=str(self.ir['CarSetup']['Chassis'][side]['RideHeight']),
+            shockDefl=str(self.ir['CarSetup']['Chassis'][side]['ShockDefl']),
+            springDefl=str(self.ir['CarSetup']['Chassis'][side]['SpringDefl']),
+            toeIn=str(self.ir['CarSetup']['Chassis'][side]['ToeIn']),
+            torsionBarOD=str(self.ir['CarSetup']['Chassis'][side]['TorsionBarOD']),
+            torsionBarPreload=str(self.ir['CarSetup']['Chassis'][side]['TorsionBarPreload'])
+        )
+
+    def _create_chassis_rear(self) -> iracing_pb2.ChassisRear:
+        """Creates the rear chassis data"""
+        return iracing_pb2.ChassisRear(
+            arbDriveArmLength=str(self.ir['CarSetup']['Chassis']['Rear']['ArbDriveArmLength']),
+            arbSize=str(self.ir['CarSetup']['Chassis']['Rear']['ArbSize']),
+            brakePressureBias=str(self.ir['CarSetup']['Chassis']['Rear']['BrakePressureBias']),
+            fuelLevel=str(self.ir['CarSetup']['Chassis']['Rear']['FuelLevel']),
+            pushrodLengthOffset=str(self.ir['CarSetup']['Chassis']['Rear']['PushrodLengthOffset']),
+            thirdDamperDefl=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdDamperDefl']),
+            thirdPerchOffset=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdPerchOffset']),
+            thirdSpring=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdSpring']),
+            thirdSpringDefl=str(self.ir['CarSetup']['Chassis']['Rear']['ThirdSpringDefl'])
+        )
+
+    def _create_chassis_rear_side(self, side: str) -> iracing_pb2.ChassisRearSide:
+        """Creates the rear side chassis data"""
+        return iracing_pb2.ChassisRearSide(
+            camber=str(self.ir['CarSetup']['Chassis'][side]['Camber']),
+            compDamping=str(self.ir['CarSetup']['Chassis'][side]['CompDamping']),
+            cornerWeight=str(self.ir['CarSetup']['Chassis'][side]['CornerWeight']),
+            cbdDamping=str(self.ir['CarSetup']['Chassis'][side]['CbdDamping']),
+            rideHeight=str(self.ir['CarSetup']['Chassis'][side]['RideHeight']),
+            shockDefl=str(self.ir['CarSetup']['Chassis'][side]['ShockDefl']),
+            springDefl=str(self.ir['CarSetup']['Chassis'][side]['SpringDefl']),
+            springPerchOffset=str(self.ir['CarSetup']['Chassis'][side]['SpringPerchOffset']),
+            springRate=str(self.ir['CarSetup']['Chassis'][side]['SpringRate']),
+            toeIn=str(self.ir['CarSetup']['Chassis'][side]['ToeIn'])
+        )
+
+    def _create_drivetrain(self) -> iracing_pb2.Drivetrain:
+        """Creates the drivetrain data"""
+        return iracing_pb2.Drivetrain(
+            drivetrainDiff=iracing_pb2.DrivetrainDiff(
+                diffClutchFrictionFaces=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffClutchFrictionFaces']),
+                diffPreload=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffPreload']),
+                diffRampAngles=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffRampAngles'])
+            ),
+            drivetrainDt=iracing_pb2.DrivetrainDt(
+                firstGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FirstGear']),
+                secondGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['SecondGear']),
+                thirdGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['ThirdGear']),
+                fourthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FourthGear']),
+                fifthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FifthGear']),
+                sixthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['SixthGear'])
+            )
+        )
+
+    def _create_tyres_aero(self) -> iracing_pb2.AeroTyres:
+        """Creates the tyres and aero data"""
+        return iracing_pb2.AeroTyres(
+            aeroSetup=iracing_pb2.AeroSetup(
+                aeroPackage=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['AeroPackage']),
+                frontFlapAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapAngle']),
+                frontFlapConfiguration=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapConfiguration']),
+                frontFlapGurneyFlap=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapGurneyFlap']),
+                rearBeamWingAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['RearBeamWingAngle']),
+                rearUpperFlapAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['RearUpperFlapAngle'])
+            ),
+            aeroTyreLeftFront=self._create_aero_tyre('LeftFront'),
+            aeroTyreRightFront=self._create_aero_tyre('RightFront'),
+            aeroTyreLeftRear=self._create_aero_tyre('LeftRear'),
+            aeroTyreRightRear=self._create_aero_tyre('RightRear')
+        )
+
+    def _create_aero_tyre(self, position: str) -> iracing_pb2.AeroTyre:
+        """Creates the aero tyre data for a specific position"""
+        return iracing_pb2.AeroTyre(
+            coldPressure=str(self.ir['CarSetup']['TyresAero'][position]['ColdPressure']),
+            lastHotPressure=str(self.ir['CarSetup']['TyresAero'][position]['LastHotPressure']),
+            lastTempsOMI=str(self.ir['CarSetup']['TyresAero'][position]['LastTempsOMI']),
+            treadRemaining=str(self.ir['CarSetup']['TyresAero'][position]['TreadRemaining'])
+        )
+
+    def update_session_state(self):
+        """Updates the session state based on current iRacing data"""
+        if not self.ir.is_connected:
+            return
+
+        # Update on-track state
+        self.state.is_on_track = bool(self.ir['IsOnTrack'])
+
+        # Update lap and sector information
+        current_lap = self.ir['Lap']
+        current_sector = self.ir['Sector']
+
+        # Check if outlap is completed (first lap after pit)
+        if current_lap > self.state.current_lap and self.state.current_lap == 0:
+            self.state.outlap_completed = True
+
+        # Update sector completion
+        if current_sector > self.state.last_sector:
+            self.state.last_sector = current_sector
+
+        self.state.current_lap = current_lap
+
+    def run(self):
+        """Main loop for the iRacing client"""
+        logging.info("Starting IRacingSetups client - environment %s", environment)
+
         while True:
-            # check if we are connected to iracing
-            check_iracing(state, ir)
-            # if we are, then process data
-            if state.ir_connected:
-                logging.info("Connect to iracing")
-                host = "192.168.178.70:9001"
-                with grpc.insecure_channel(host) as channel:
-                    stub = IracingServiceStub(channel)
-                    try:
-                        response = stub.SendNewSession(
-                            iracing_pb2.SendNewSessionRequest(
-                            userId="898674",
-                            sessionId=str(ir['WeekendInfo']['SessionID']),
-                            track=iracing_pb2.TrackMessage(
-                                trackId=str(ir['WeekendInfo']['TrackID']),
-                                name=f"{ir['WeekendInfo']['TrackDisplayName']} ({ir['WeekendInfo']['TrackName']})",
-                                configName=ir['WeekendInfo']['TrackConfigName'],
-                                city=ir['WeekendInfo']['TrackCity'],
-                                country=ir['WeekendInfo']['TrackCountry'],
-                                trackGps=iracing_pb2.GPSTrack(
-                                    trackGpsLat=ir['WeekendInfo']['TrackLatitude'],
-                                    trackGpsLong=ir['WeekendInfo']['TrackLongitude'],
-                                    trackGpsAlt=ir['WeekendInfo']['TrackAltitude']
-                                ),
-                                length=ir['WeekendInfo']['TrackLength'],
-                                turns=str(ir['WeekendInfo']['TrackNumTurns'])
-                            ),
-                            driver=iracing_pb2.DriverMessage(
-                                driverId=str(ir['DriverInfo']['Drivers'][0]['UserID']),
-                                driverName=ir['DriverInfo']['Drivers'][0]['UserName'],
-                                driverCar=ir['DriverInfo']['Drivers'][0]['CarScreenName'],
-                                driverCarId=str(ir['DriverInfo']['Drivers'][0]['CarID']),
-                                driverTeamId=str(ir['DriverInfo']['Drivers'][0]['TeamID']),
-                                driverSetupName=ir['DriverInfo']['Drivers'][0]['DriverSetupName'],
-                            )
-                        ))
+            try:
+                # Check if iRacing is running
+                if self.ir.is_connected:
+                    # Connect to gRPC if not already connected
+                    if not self.channel:
+                        self.connect_to_grpc()
 
+                    # Update session state
+                    self.update_session_state()
 
-                        # car_setup = SendLapRequest.CarSetup(
-                        #     chassis=SendLapRequest.Chassis(
-                        #         chassisqFront=SendLapRequest.ChassisFront(
-                        #             arbBlades=ir['CarSetup']['Chassis']['Front']['ArbBlades'],
-                        #             arbDriveArmLength=ir['CarSetup']['Chassis']['Front']['ArbDriveArmLength'],
-                        #             arbSize=ir['CarSetup']['Chassis']['Front']['ArbSize'],
-                        #             arbPreload=ir['CarSetup']['Chassis']['Front']['ArbPreload'],
-                        #             brakePressureBias=ir['CarSetup']['Chassis']['Front']['BrakePressureBias'],
-                        #             crossWeight=ir['CarSetup']['Chassis']['Front']['CrossWeight'],
-                        #             displayPage=ir['CarSetup']['Chassis']['Front']['DisplayPage'],
-                        #             frontMasterCylinder=ir['CarSetup']['Chassis']['Front']['FrontMasterCylinder'],
-                        #             heaveDamperDefl=ir['CarSetup']['Chassis']['Front']['HeaveDamperDefl'],
-                        #             heavePerchOffset=ir['CarSetup']['Chassis']['Front']['HeavePerchOffset'],
-                        #             heaveSpring=ir['CarSetup']['Chassis']['Front']['HeaveSpring'],
-                        #             heaveSpringDefl=ir['CarSetup']['Chassis']['Front']['HeaveSpringDefl'],
-                        #             pushrodLengthOffset=ir['CarSetup']['Chassis']['Front']['PushrodLengthOffset'],
-                        #             rearMasterCylinder=ir['CarSetup']['Chassis']['Front']['RearMasterCylinder'],
-                        #         ),
-                        #         chassisLeftFront=SendLapRequest.ChassisFrontSide(
-                        #             camber=ir['CarSetup']['Chassis']['LeftFront']['Camber'],
-                        #             caster=ir['CarSetup']['Chassis']['LeftFront']['Caster'],
-                        #             compDamping=ir['CarSetup']['Chassis']['LeftFront']['CompDamping'],
-                        #             cornerWeight=ir['CarSetup']['Chassis']['LeftFront']['CornerWeight'],
-                        #             rbdDamping=ir['CarSetup']['Chassis']['LeftFront']['RbdDamping'],
-                        #             rideHeight=ir['CarSetup']['Chassis']['LeftFront']['RideHeight'],
-                        #             shockDefl=ir['CarSetup']['Chassis']['LeftFront']['ShockDefl'],
-                        #             springDefl=ir['CarSetup']['Chassis']['LeftFront']['SpringDefl'],
-                        #             toeIn=ir['CarSetup']['Chassis']['LeftFront']['ToeIn'],
-                        #             torsionBarOD=ir['CarSetup']['Chassis']['LeftFront']['TorsionBarOD'],
-                        #             torsionBarPreload=ir['CarSetup']['Chassis']['LeftFront']['TorsionBarPreload'],
-                        #         ),
-                        #         chassisRightFront=SendLapRequest.ChassisFrontSide(
-                        #             camber=ir['CarSetup']['Chassis']['RightFront']['Camber'],
-                        #             caster=ir['CarSetup']['Chassis']['RightFront']['Caster'],
-                        #             compDamping=ir['CarSetup']['Chassis']['RightFront']['CompDamping'],
-                        #             cornerWeight=ir['CarSetup']['Chassis']['RightFront']['CornerWeight'],
-                        #             rbdDamping=ir['CarSetup']['Chassis']['RightFront']['RbdDamping'],
-                        #             rideHeight=ir['CarSetup']['Chassis']['RightFront']['RideHeight'],
-                        #             shockDefl=ir['CarSetup']['Chassis']['RightFront']['ShockDefl'],
-                        #             springDefl=ir['CarSetup']['Chassis']['RightFront']['SpringDefl'],
-                        #             toeIn=ir['CarSetup']['Chassis']['RightFront']['ToeIn'],
-                        #             torsionBarOD=ir['CarSetup']['Chassis']['RightFront']['TorsionBarOD'],
-                        #             torsionBarPreload=ir['CarSetup']['Chassis']['RightFront']['TorsionBarPreload'],
-                        #         ),
-                        #         chassisRear=SendLapRequest.ChassisRear(
-                        #             arbDriveArmLength=ir['CarSetup']['Chassis']['Rear']['ArbDriveArmLength'],
-                        #             arbSize=ir['CarSetup']['Chassis']['Rear']['ArbSize'],
-                        #             brakePressureBias=ir['CarSetup']['Chassis']['Rear']['BrakePressureBias'],
-                        #             fuelLevel=ir['CarSetup']['Chassis']['Rear']['FuelLevel'],
-                        #             pushrodLengthOffset=ir['CarSetup']['Chassis']['Rear']['PushrodLengthOffset'],
-                        #             thirdDamperDefl=ir['CarSetup']['Chassis']['Rear']['ThirdDamperDefl'],
-                        #             thirdPerchOffset=ir['CarSetup']['Chassis']['Rear']['ThirdPerchOffset'],
-                        #             thirdSpring=ir['CarSetup']['Chassis']['Rear']['ThirdSpring'],
-                        #             thirdSpringDefl=ir['CarSetup']['Chassis']['Rear']['ThirdSpringDefl'],
-                        #         ),
-                        #         chassisLeftRear=SendLapRequest.ChassisRearSide(
-                        #             camber=ir['CarSetup']['Chassis']['LeftRear']['Camber'],
-                        #             compDamping=ir['CarSetup']['Chassis']['LeftRear']['CompDamping'],
-                        #             cornerWeight=ir['CarSetup']['Chassis']['LeftRear']['CornerWeight'],
-                        #             cbdDamping=ir['CarSetup']['Chassis']['LeftRear']['CbdDamping'],
-                        #             rideHeight=ir['CarSetup']['Chassis']['LeftRear']['RideHeight'],
-                        #             shockDefl=ir['CarSetup']['Chassis']['LeftRear']['ShockDefl'],
-                        #             springDefl=ir['CarSetup']['Chassis']['LeftRear']['SpringDefl'],
-                        #             springRate=ir['CarSetup']['Chassis']['LeftRear']['SpringRate'],
-                        #             toeIn=ir['CarSetup']['Chassis']['LeftRear']['ToeIn'],
-                        #         ),
-                        #         chassisRightRear=SendLapRequest.ChassisRearSide(
-                        #             camber=ir['CarSetup']['Chassis']['RightRear']['Camber'],
-                        #             compDamping=ir['CarSetup']['Chassis']['RightRear']['CompDamping'],
-                        #             cornerWeight=ir['CarSetup']['Chassis']['RightRear']['CornerWeight'],
-                        #             cbdDamping=ir['CarSetup']['Chassis']['RightRear']['CbdDamping'],
-                        #             rideHeight=ir['CarSetup']['Chassis']['RightRear']['RideHeight'],
-                        #             shockDefl=ir['CarSetup']['Chassis']['RightRear']['ShockDefl'],
-                        #             springDefl=ir['CarSetup']['Chassis']['RightRear']['SpringDefl'],
-                        #             springPerchOffset=ir['CarSetup']['Chassis']['RightRear']['SpringPerchOffset'],
-                        #             springRate=ir['CarSetup']['Chassis']['RightRear']['SpringRate'],
-                        #             toeIn=ir['CarSetup']['Chassis']['RightRear']['ToeIn'],
-                        #         ),
-                        #     ),
-                        #     drivetrain=SendLapRequest.Drivetrain(
-                        #         drivetrainDiff=SendLapRequest.DrivetrainDiff(
-                        #             diffClutchFrictionFaces=ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffClutchFrictionFaces'],
-                        #             diffPreload=ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffPreload'],
-                        #             diffRampAngles=ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffRampAngles'],
-                        #         ),
-                        #         drivetrainDt=SendLapRequest.DrivetrainDt(
-                        #             firstGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['FirstGear'],
-                        #             secondGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['SecondGear'],
-                        #             thirdGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['ThirdGear'],
-                        #             fourthGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['FourthGear'],
-                        #             fifthGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['FifthGear'],
-                        #             sixthGear=ir['CarSetup']['Drivetrain']['DrivetrainDt']['SixthGear'],
-                        #         ),
-                        #     ),
-                        #     tyresAero=SendLapRequest.TyresAero(
-                        #         aeroSetup=SendLapRequest.AeroSetup(
-                        #             aeroPackage=ir['setup']['TyresAero']['AeroSetup']['AeroPackage'],
-                        #             frontFlapAngle=ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapAngle'],
-                        #             frontFlapConfiguration=ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapConfiguration'],
-                        #             frontFlapGurneyFlap=ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapGurneyFlap'],
-                        #             rearBeamWingAngle=ir['CarSetup']['TyresAero']['AeroSetup']['RearBeamWingAngle'],
-                        #             rearUpperFlapAngle=ir['CarSetup']['TyresAero']['AeroSetup']['RearUpperFlapAngle'],
-                        #         ),
-                        #         LeftFront=SendLapRequest.AeroTyre(
-                        #             coldPressure=ir['CarSetup']['TyresAero']['LeftFront']['ColdPressure'],
-                        #             lastHotPressure=ir['CarSetup']['TyresAero']['LeftFront']['LastHotPressure'],
-                        #             lastTempsOMI=ir['CarSetup']['TyresAero']['LeftFront']['LastTempsOMI'],
-                        #             treadRemaining=ir['CarSetup']['TyresAero']['LeftFront']['TreadRemaining'],
-                        #         ),
-                        #         RightFront=SendLapRequest.AeroTyre(
-                        #             coldPressure=ir['CarSetup']['TyresAero']['RightFront']['ColdPressure'],
-                        #             lastHotPressure=ir['CarSetup']['TyresAero']['RightFront']['LastHotPressure'],
-                        #             lastTempsOMI=ir['CarSetup']['TyresAero']['RightFront']['LastTempsOMI'],
-                        #             treadRemaining=ir['CarSetup']['TyresAero']['RightFront']['TreadRemaining'],
-                        #         ),
-                        #         LeftRear=SendLapRequest.AeroTyre(
-                        #             coldPressure=ir['CarSetup']['TyresAero']['LeftRear']['ColdPressure'],
-                        #             lastHotPressure=ir['CarSetup']['TyresAero']['LeftRear']['LastHotPressure'],
-                        #             lastTempsOMI=ir['CarSetup']['TyresAero']['LeftRear']['LastTempsOMI'],
-                        #             treadRemaining=ir['CarSetup']['TyresAero']['LeftRear']['TreadRemaining'],
-                        #         ),
-                        #         RightRear=SendLapRequest.AeroTyre(
-                        #             coldPressure=ir['CarSetup']['TyresAero']['RightRear']['ColdPressure'],
-                        #             lastHotPressure=ir['CarSetup']['TyresAero']['RightRear']['LastHotPressure'],
-                        #             lastTempsOMI=ir['CarSetup']['TyresAero']['RightRear']['LastTempsOMI'],
-                        #             treadRemaining=ir['CarSetup']['TyresAero']['RightRear']['TreadRemaining'],
-                        #         )
-                        #     )
-                        # )
-                        #
-                        # split_time_info = SendLapRequest.SplitTimeInfo(
-                        #     sectors=[
-                        #         SendLapRequest.Sector(
-                        #             sectorNum=1,
-                        #             sectorStartPct=0.25,
-                        #         ),
-                        #         SendLapRequest.Sector(
-                        #             sectorNum=2,
-                        #             sectorStartPct=0.5,
-                        #         ),
-                        #         SendLapRequest.Sector(
-                        #             sectorNum=3,
-                        #             sectorStartPct=0.75,
-                        #         ),
-                        #     ]
-                        # )
-                        #
-                        # telemetry = SendLapRequest.Telemetry(
-                        #     lap=ir['Lap'],
-                        #     lapCompleted=ir['LapCompleted'],
-                        #     lapCurrentLapTime=ir['LapCurrentLapTime'],
-                        #     lapDeltaToBestLap=ir['LapDeltaToBestLap'],
-                        #     lapDist=ir['LapDist'],
-                        #     lapDistPct=ir['LapDistPct'],
-                        #     lapLastLapTime=ir['LapLastLapTime'],
-                        #     playerCarMyIncidentCount=ir['PlayerCarMyIncidentCount'],
-                        #     playerCarTeamIncidentCount=ir['PlayerCarTeamIncidentCount'],
-                        # )
-                        #
-                        # grpc_request = SendLapRequest(
-                        #     userId="898674",
-                        #     session_id=ir['sessionuniqueid'],
-                        #     track=track,
-                        #     driver=driver,
-                        #     carSetup=car_setup,
-                        #     splitTimeInfo=split_time_info,
-                        #     telemetry=telemetry,
-                        # )
-                    except grpc.aio.AioRpcError as e:
-                        logging.error("Error data not send to server: %s", e)
-            else:
-                logging.info("failed to connect to iracing")
+                    # Register session if not already registered
+                    if not self.state.is_registered:
+                        if self.register_session():
+                            self.state.is_registered = True
+                            logging.info("Session registered successfully")
 
-            # sleep for 1 second
-            # maximum you can use is 1/60
-            # cause iracing updates data with 60 fps
-            time.sleep(1)
-    except KeyboardInterrupt:
-        # press ctrl+c to exit
-        pass
+                    # Send car setup if session is registered and setup hasn't been sent
+                    if self.state.is_registered and not self.state.car_setup_sent:
+                        if self.send_car_setup():
+                            self.state.car_setup_sent = True
+                            logging.info("Car setup sent successfully")
+
+                    # Send telemetry if all conditions are met
+                    if (self.state.is_registered and 
+                        self.state.is_on_track and 
+                        self.state.outlap_completed and 
+                        self.state.last_sector > 0):
+                        self.send_telemetry()
+
+                else:
+                    # Disconnect from gRPC if iRacing is not running
+                    self.disconnect_from_grpc()
+                    # Reset session state
+                    self.state = SessionState()
+
+                # Sleep to prevent excessive CPU usage
+                time.sleep(0.1)
+
+            except Exception as e:
+                logging.error(f"Error in main loop: {e}")
+                time.sleep(1)  # Sleep longer on error
 
 
 def main():
-    logging.config.dictConfig(config)
-    startup()
+    client = IRacingClient()
+    client.run()
+
+
+if __name__ == "__main__":
+    main()
