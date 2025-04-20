@@ -116,7 +116,7 @@ message ChassisRearSide {
   string camber = 1;
   string compDamping = 2;
   string cornerWeight = 3;
-  string cbdDamping = 4;
+  string rbdDamping = 4;
   string rideHeight = 5;
   string shockDefl = 6;
   string springDefl = 7;
