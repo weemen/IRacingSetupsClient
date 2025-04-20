@@ -312,6 +312,7 @@ class IRacingClient:
 
                 else:
                     # Disconnect from gRPC if iRacing is not running
+                    logging.info("iRacing is not running")
                     self.disconnect_from_grpc()
                     # Reset session state
                     self.state = SessionState()
