@@ -259,7 +259,7 @@ class IRacingClient:
             return
 
         # Update on-track state
-        self.state.is_on_track = bool(self.ir['IsOnTrack'])
+        self.state.is_on_track = bool(self.ir['IsOnTrack']) and not bool(self.ir['IsInPit'])
 
         # Update lap and sector information
         current_lap = self.ir['Lap']
