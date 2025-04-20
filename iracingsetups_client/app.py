@@ -309,7 +309,7 @@ class IRacingClient:
                             self.state.is_registered = True
                             logging.info(f"Session registered successfully with ID: {self.state.session_id}")
                         else:
-                            continue
+                            sys.exit(1)
 
                     # Update session state
                     self.update_session_state()
