@@ -61,11 +61,11 @@ class IRacingClient:
                 userId="898674",  # TODO: Make this configurable
                 sessionId=self.state.session_id,
                 track=iracing_pb2.TrackMessage(
-                    trackId=str(self.ir['WeekendInfo']['TrackID']),
-                    name=self.ir['WeekendInfo']['TrackDisplayName'],
-                    configName=self.ir['WeekendInfo']['TrackConfigName'],
-                    city=self.ir['WeekendInfo']['TrackCity'],
-                    country=self.ir['WeekendInfo']['TrackCountry'],
+                    trackId=str(self.ir['WeekendInfo']['TrackID']).encode('utf-8'),
+                    name=self.ir['WeekendInfo']['TrackDisplayName'].encode('utf-8'),
+                    configName=self.ir['WeekendInfo']['TrackConfigName'].encode('utf-8'),
+                    city=self.ir['WeekendInfo']['TrackCity'].encode('utf-8'),
+                    country=self.ir['WeekendInfo']['TrackCountry'].encode('utf-8'),
                     trackGps=iracing_pb2.GPSTrack(
                         trackGpsLat=self.ir['WeekendInfo']['TrackLatitude'],
                         trackGpsLong=self.ir['WeekendInfo']['TrackLongitude'],
