@@ -293,10 +293,10 @@ class IRacingClient:
                     logging.info("iRacing is running")
                     if not self.channel:
                         self.connect_to_grpc()
-
+                    logging.info("Connected to gRPC")
                     # Update session state
                     self.update_session_state()
-
+                    logging.info("Session state updated")
                     # Register session if not already registered
                     if not self.state.is_registered:
                         logging.info("Registering session")
@@ -306,6 +306,7 @@ class IRacingClient:
 
                     # Send car setup if session is registered and setup hasn't been sent
                     if self.state.is_registered and not self.state.car_setup_sent:
+                        logging.info("Sending car setup")
                         if self.send_car_setup():
                             self.state.car_setup_sent = True
                             logging.info("Car setup sent successfully")
@@ -315,6 +316,7 @@ class IRacingClient:
                         self.state.is_on_track and 
                         self.state.outlap_completed and 
                         self.state.last_sector > 0):
+                        logging.info("Sending telemetry")
                         self.send_telemetry()
 
                 else:
