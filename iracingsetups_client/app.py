@@ -283,6 +283,7 @@ class IRacingClient:
                 # Check if iRacing is running
                 if self.ir.is_connected:
                     # Connect to gRPC if not already connected
+                    logging.info("iRacing is running")
                     if not self.channel:
                         self.connect_to_grpc()
 
@@ -291,6 +292,7 @@ class IRacingClient:
 
                     # Register session if not already registered
                     if not self.state.is_registered:
+                        logging.info("Registering session")
                         if self.register_session():
                             self.state.is_registered = True
                             logging.info(f"Session registered successfully with ID: {self.state.session_id}")
