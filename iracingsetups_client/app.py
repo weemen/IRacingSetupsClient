@@ -131,7 +131,7 @@ class IRacingClient:
         try:
             lap = self.ir['Lap']
             logging.info("Lap: %s | Sector: %s", lap, self.state.last_sector)
-            if self.state.last_sector == 0 and lap > 0:
+            if self.state.last_sector == 1 and lap > 0:
                 lap = self.ir['Lap'] - 1
 
             request = iracing_pb2.SendTelemetryRequest(
