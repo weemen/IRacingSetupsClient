@@ -129,10 +129,14 @@ class IRacingClient:
             return False
 
         try:
+            lap = self.ir['Lap']
+            if self.state.last_sector == 0 and lap > 0:
+                lap = self.ir['Lap'] - 1
+
             request = iracing_pb2.SendTelemetryRequest(
                 userId="898674",  # TODO: Make this configurable
                 sessionId=self.state.session_id,  # Use the same session ID
-                lap=self.ir['Lap'],
+                lap=lap,
                 lapCompleted=self.ir['LapCompleted'],
                 lapCurrentLapTime=self.ir['LapCurrentLapTime'],
                 lapDeltaToBestLap=str(self.ir['LapDeltaToBestLap']),
