@@ -346,7 +346,7 @@ class IRacingClient:
                         self.state.outlap_completed and
                         self.state.sector_changed and
                         self.state.last_sector > 0):
-                        logging.info("Sending telemetry")
+                        logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
                         self.send_telemetry()
 
                 else:
