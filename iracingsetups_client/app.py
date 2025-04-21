@@ -130,6 +130,7 @@ class IRacingClient:
 
         try:
             lap = self.ir['Lap']
+            logging.info("Lap: %s | Sector: %s", lap, self.state.last_sector)
             if self.state.last_sector == 0 and lap > 0:
                 lap = self.ir['Lap'] - 1
 
@@ -352,7 +353,7 @@ class IRacingClient:
                         self.state.outlap_completed and
                         self.state.sector_changed and
                         self.state.last_sector > 0):
-                        logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
+                        # logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
                         self.state.sector_changed = False
                         self.send_telemetry()
 
