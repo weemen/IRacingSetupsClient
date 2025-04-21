@@ -347,6 +347,7 @@ class IRacingClient:
                         self.state.sector_changed and
                         self.state.last_sector > 0):
                         logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
+                        self.state.sector_changed = False
                         self.send_telemetry()
 
                 else:
