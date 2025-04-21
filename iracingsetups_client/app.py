@@ -117,7 +117,7 @@ class IRacingClient:
             )
             
             response = self.stub.SendCarSetup(request)
-            return response.message == "Success"
+            return response.message == "Car setup registered"
         except Exception as e:
             logging.error(f"Failed to send car setup: {e}")
             return False
