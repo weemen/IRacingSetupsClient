@@ -23,6 +23,7 @@ class SessionState:
     is_in_pit: bool = False
     outlap_completed: bool = False
     last_sector: int = 0
+    previous_sector: int = 0
     sector_changed: bool = False
     current_lap: int = 0
     session_id: str = ""  # Store the UUID for the current session
@@ -141,7 +142,7 @@ class IRacingClient:
                 playerCarMyIncidentCount=str(self.ir['PlayerCarMyIncidentCount']),
                 playerCarTeamIncidentCount=str(self.ir['PlayerCarTeamIncidentCount']),
                 brakeBias=str(self.ir['BrakeBias']),
-                sector=self.ir['Sector'],
+                sector=self.state.previous_sector,
                 isOnTrack=str(self.ir['IsOnTrack']),
                 isInPit=str(self.state.is_in_pit),
                 isInGarage=str(self.ir['IsInGarage'])
@@ -298,6 +299,7 @@ class IRacingClient:
 
         # Update sector completion
         if current_sector != self.state.last_sector:
+            self.state.previous_sector = self.state.last_sector
             self.state.last_sector = current_sector
             self.state.sector_changed = True
         self.state.current_lap = current_lap
