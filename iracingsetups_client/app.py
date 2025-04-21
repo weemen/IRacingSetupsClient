@@ -23,6 +23,7 @@ class SessionState:
     is_in_pit: bool = False
     outlap_completed: bool = False
     last_sector: int = 0
+    sector_changed: bool = False
     current_lap: int = 0
     session_id: str = ""  # Store the UUID for the current session
 
@@ -296,9 +297,9 @@ class IRacingClient:
             self.state.outlap_completed = True
 
         # Update sector completion
-        if current_sector > self.state.last_sector:
+        if current_sector != self.state.last_sector:
             self.state.last_sector = current_sector
-
+            self.state.sector_changed = True
         self.state.current_lap = current_lap
 
     def check_iracing(self):
@@ -316,10 +317,10 @@ class IRacingClient:
                 # Check if iRacing is running
                 if self.state.is_connected:
                     # Connect to gRPC if not already connected
-                    logging.info("iRacing is running")
+                    logging.debug("iRacing is running")
                     if not self.channel:
                         self.connect_to_grpc()
-                    logging.info("Connected to gRPC")
+                    # logging.debug("Connected to gRPC")
                     
                     # Register session if not already registered
                     if not self.state.is_registered:
@@ -330,7 +331,7 @@ class IRacingClient:
 
                     # Update session state
                     self.update_session_state()
-                    logging.info("Session state updated")
+                    logging.debug("Session state updated")
 
                     # Send car setup if session is registered and setup hasn't been sent
                     if self.state.is_registered and not self.state.car_setup_sent:
@@ -342,7 +343,8 @@ class IRacingClient:
                     # Send telemetry if all conditions are met
                     if (self.state.is_registered and 
                         self.state.is_on_track and 
-                        self.state.outlap_completed and 
+                        self.state.outlap_completed and
+                        self.state.sector_changed and
                         self.state.last_sector > 0):
                         logging.info("Sending telemetry")
                         self.send_telemetry()
