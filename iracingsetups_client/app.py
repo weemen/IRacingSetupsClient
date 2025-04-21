@@ -209,7 +209,6 @@ class IRacingClient:
             compDamping=str(self.ir['CarSetup']['Chassis'][side]['CompDamping']),
             cornerWeight=str(self.ir['CarSetup']['Chassis'][side]['CornerWeight']),
             rbdDamping=str(self.ir['CarSetup']['Chassis'][side]['RbdDamping']),
-            rideHeight=str(self.ir['CarSetup']['Chassis'][side]['RideHeight']),
             shockDefl=str(self.ir['CarSetup']['Chassis'][side]['ShockDefl']),
             springDefl=str(self.ir['CarSetup']['Chassis'][side]['SpringDefl']),
             springPerchOffset=str(self.ir['CarSetup']['Chassis'][side]['SpringPerchOffset']),
@@ -221,17 +220,17 @@ class IRacingClient:
         """Creates the drivetrain data"""
         return iracing_pb2.Drivetrain(
             drivetrainDiff=iracing_pb2.DrivetrainDiff(
-                diffClutchFrictionFaces=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffClutchFrictionFaces']),
-                diffPreload=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffPreload']),
-                diffRampAngles=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDiff']['DiffRampAngles'])
+                diffClutchFrictionFaces=str(self.ir['CarSetup']['Drivetrain']['Diff']['DiffClutchFrictionFaces']),
+                diffPreload=str(self.ir['CarSetup']['Drivetrain']['Diff']['DiffPreload']),
+                diffRampAngles=str(self.ir['CarSetup']['Drivetrain']['Diff']['DiffRampAngles'])
             ),
             drivetrainDt=iracing_pb2.DrivetrainDt(
-                firstGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FirstGear']),
-                secondGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['SecondGear']),
-                thirdGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['ThirdGear']),
-                fourthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FourthGear']),
-                fifthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['FifthGear']),
-                sixthGear=str(self.ir['CarSetup']['Drivetrain']['DrivetrainDt']['SixthGear'])
+                firstGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['FirstGear']),
+                secondGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['SecondGear']),
+                thirdGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['ThirdGear']),
+                fourthGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['FourthGear']),
+                fifthGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['FifthGear']),
+                sixthGear=str(self.ir['CarSetup']['Drivetrain']['Drivetrain']['SixthGear'])
             )
         )
 
@@ -239,12 +238,12 @@ class IRacingClient:
         """Creates the tyres and aero data"""
         return iracing_pb2.AeroTyres(
             aeroSetup=iracing_pb2.AeroSetup(
-                aeroPackage=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['AeroPackage']),
-                frontFlapAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapAngle']),
-                frontFlapConfiguration=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapConfiguration']),
-                frontFlapGurneyFlap=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['FrontFlapGurneyFlap']),
-                rearBeamWingAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['RearBeamWingAngle']),
-                rearUpperFlapAngle=str(self.ir['CarSetup']['TyresAero']['AeroSetup']['RearUpperFlapAngle'])
+                aeroPackage=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['AeroPackage']),
+                frontFlapAngle=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['FrontFlapAngle']),
+                frontFlapConfiguration=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['FrontFlapConfiguration']),
+                frontFlapGurneyFlap=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['FrontFlapGurneyFlap']),
+                rearBeamWingAngle=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['RearBeamWingAngle']),
+                rearUpperFlapAngle=str(self.ir['CarSetup']['TiresAero']['AeroSetup']['RearUpperFlapAngle'])
             ),
             aeroTyreLeftFront=self._create_aero_tyre('LeftFront'),
             aeroTyreRightFront=self._create_aero_tyre('RightFront'),
@@ -254,11 +253,17 @@ class IRacingClient:
 
     def _create_aero_tyre(self, position: str) -> iracing_pb2.AeroTyre:
         """Creates the aero tyre data for a specific position"""
+        if "Left" in position:
+            temps = self.ir['CarSetup']['TiresAero'][position]['LastTempsOMI']
+        else:
+            t = self.ir['CarSetup']['TiresAero'][position]['LastTempsIMO'].split(", ")
+            t.reverse()
+            temps = ", ".join(t)
         return iracing_pb2.AeroTyre(
-            coldPressure=str(self.ir['CarSetup']['TyresAero'][position]['ColdPressure']),
-            lastHotPressure=str(self.ir['CarSetup']['TyresAero'][position]['LastHotPressure']),
-            lastTempsOMI=str(self.ir['CarSetup']['TyresAero'][position]['LastTempsOMI']),
-            treadRemaining=str(self.ir['CarSetup']['TyresAero'][position]['TreadRemaining'])
+            coldPressure=str(self.ir['CarSetup']['TiresAero'][position]['ColdPressure']),
+            lastHotPressure=str(self.ir['CarSetup']['TiresAero'][position]['LastHotPressure']),
+            lastTempsOMI=temps,
+            treadRemaining=str(self.ir['CarSetup']['TiresAero'][position]['TreadRemaining'])
         )
 
     def _return_current_sector(self, sectors, current_percentage) -> int:
