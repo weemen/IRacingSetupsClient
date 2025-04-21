@@ -366,9 +366,6 @@ class IRacingClient:
 
                     self.check_iracing()
 
-                # Sleep to prevent excessive CPU usage
-                time.sleep(0.1)
-
             except Exception as e:
                 logging.error(f"Error in main loop: {e}")
                 time.sleep(1)  # Sleep longer on error
