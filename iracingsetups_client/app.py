@@ -134,12 +134,16 @@ class IRacingClient:
             if self.state.last_sector == 1 and lap > 0:
                 lap = self.ir['Lap'] - 1
 
+            last_sector_time = self.ir['LapCurrentLapTime']
+            if self.state.last_sector == len(self.ir['SplitTimeInfo']['Sectors']) and lap > 0:
+                last_sector_time = self.ir['LapLastLapTime']
+
             request = iracing_pb2.SendTelemetryRequest(
                 userId="898674",  # TODO: Make this configurable
                 sessionId=self.state.session_id,  # Use the same session ID
                 lap=lap,
                 lapCompleted=self.ir['LapCompleted'],
-                lapCurrentLapTime=self.ir['LapCurrentLapTime'],
+                lapCurrentLapTime=last_sector_time,
                 lapDeltaToBestLap=str(self.ir['LapDeltaToBestLap']),
                 lapDist=str(self.ir['LapDist']),
                 lapDistPct=str(self.ir['LapDistPct']),
