@@ -60,7 +60,7 @@ class IRacingClient:
             self.state.session_id = str(uuid.uuid4())
             # Create session request
             request = iracing_pb2.SendNewSessionRequest(
-                userId="898674",  # TODO: Make this configurable
+                userId=config["iracing_user_id"],
                 sessionId=self.state.session_id,
                 track=iracing_pb2.TrackMessage(
                     trackId=str(self.ir['WeekendInfo']['TrackID']).encode('utf-8'),
@@ -101,7 +101,7 @@ class IRacingClient:
         try:
             # Create car setup request
             request = iracing_pb2.SendCarSetupRequest(
-                userId="898674",  # TODO: Make this configurable
+                userId=config["iracing_user_id"],
                 sessionId=self.state.session_id,  # Use the same session ID
                 carSetup=iracing_pb2.CarSetup(
                     chassis=iracing_pb2.Chassis(
@@ -135,7 +135,7 @@ class IRacingClient:
                 lap = self.ir['Lap'] - 1
 
             last_sector_time = self.ir['LapCurrentLapTime']
-            if self.state.last_sector == len(self.ir['SplitTimeInfo']['Sectors']) and lap > 0:
+            if self.state.previous_sector == len(self.ir['SplitTimeInfo']['Sectors']) and lap > 0:
                 last_sector_time = self.ir['LapLastLapTime']
 
             request = iracing_pb2.SendTelemetryRequest(
@@ -381,7 +381,10 @@ def main():
     
     # Set the root logger level to INFO to ensure INFO messages are visible
     logging.getLogger().setLevel(logging.INFO)
-    
+    if not config["iracing_user_id"]:
+        logging.error("IRacing user id is not set")
+        return
+
     # Create and run the client
     client = IRacingClient()
     client.run()

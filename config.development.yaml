@@ -1,6 +1,8 @@
 version: 1
 disable_existing_loggers: False
 
+iracing_user_id: "898674"
+
 formatters:
     simple:
         format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
