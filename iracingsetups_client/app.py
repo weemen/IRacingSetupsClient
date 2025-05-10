@@ -31,7 +31,7 @@ class SessionState:
 
 class IRacingClient:
     def __init__(self, host: str = "192.168.178.104", grpc_port: int = 9000, http_port: int = 8080, tracking_file_path: str = "session_tracking.json"):
-        self.host = host+":"+grpc_port
+        self.host = host+":"+str(grpc_port)
         self.tracking_domain = tracking_domain
         self.tracking_port = tracking_port
         self.tracking_file_path = tracking_file_path
