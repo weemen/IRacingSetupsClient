@@ -3,7 +3,6 @@ import logging.config
 import time
 import uuid
 from dataclasses import dataclass
-from typing import Optional
 
 import grpc
 import irsdk
@@ -11,6 +10,7 @@ import irsdk
 import iracingsetups_client.iracing_pb2 as iracing_pb2
 from iracingsetups_client.config import environment, config
 from iracingsetups_client.iracing_pb2_grpc import IracingServiceStub
+from iracingsetups_client.tracking_client import TrackingClient
 
 
 @dataclass
@@ -30,12 +30,20 @@ class SessionState:
 
 
 class IRacingClient:
-    def __init__(self, host: str = "192.168.178.104:9001"):
-        self.host = host
+    def __init__(self, host: str = "192.168.178.104", grpc_port: int = 9000, http_port: int = 8080, tracking_file_path: str = "session_tracking.json"):
+        self.host = host+":"+grpc_port
+        self.tracking_domain = tracking_domain
+        self.tracking_port = tracking_port
+        self.tracking_file_path = tracking_file_path
         self.ir = irsdk.IRSDK()
         self.state = SessionState()
         self.channel = None
         self.stub = None
+        self.tracking_client = TrackingClient(
+            domain=self.host,
+            port=http_port,
+            file_path=tracking_file_path
+        )
 
     def connect_to_grpc(self):
         """Establishes gRPC connection"""
@@ -284,7 +292,6 @@ class IRacingClient:
                 return sector['SectorNum']
         return len(sectors)
 
-
     def update_session_state(self):
         """Updates the session state based on current iRacing data"""
         if not self.state.is_connected:
@@ -360,6 +367,7 @@ class IRacingClient:
                         # logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
                         self.state.sector_changed = False
                         self.send_telemetry()
+                        self.tracking_client.update_session_tracking(self.state.session_id)
 
                 else:
                     # Disconnect from gRPC if iRacing is not running
