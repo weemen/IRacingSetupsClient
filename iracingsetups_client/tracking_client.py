@@ -7,7 +7,7 @@ from pathlib import Path
 class TrackingClient:
     """Client for handling tracking-related HTTP requests and file operations."""
     
-    def __init__(self, domain: str = "localhost", port: int = 8080, file_path: str = "session_tracking.json"):
+    def __init__(self, user_id: str, domain: str = "localhost", port: int = 8080, file_path: str = "session_tracking.json"):
         """
         Initialize the tracking client.
         
@@ -16,6 +16,7 @@ class TrackingClient:
             port (int): The port for the tracking server
             file_path (str): The path where tracking data will be saved
         """
+        self.user_id = user_id
         self.domain = domain
         self.port = port
         self.file_path = file_path
@@ -37,7 +38,7 @@ class TrackingClient:
 
         try:
             # Construct the URL
-            url = f"{self.base_url}/iracing-session/{session_id}"
+            url = f"{self.base_url}/iracing-session/iracing-session-{self.user_id}-{session_id}"
             
             # Make the GET request
             response = requests.get(url)
