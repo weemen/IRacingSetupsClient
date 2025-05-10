@@ -47,7 +47,7 @@ class TrackingClient:
 
         try:
             # Construct the URL
-            url = f"{self.base_url}/iracing-session/iracing-session-{self.user_id}-{session_id}"
+            url = f"{self.base_url}/iracing-session/current/{self.user_id}-{session_id}"
             
             # Make the GET request
             response = requests.get(url)
