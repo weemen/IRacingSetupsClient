@@ -38,7 +38,7 @@ class IRacingClient:
         self.channel = None
         self.stub = None
         self.tracking_client = TrackingClient(
-            domain=self.host,
+            domain=host,
             port=http_port,
             file_path=tracking_file_path
         )
