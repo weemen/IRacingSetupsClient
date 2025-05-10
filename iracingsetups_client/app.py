@@ -30,18 +30,18 @@ class SessionState:
 
 
 class IRacingClient:
-    def __init__(self, host: str = "192.168.178.104", grpc_port: int = 9001, http_port: int = 8080, tracking_file_path: str = "session_tracking.json"):
-        self.host = host+":"+str(grpc_port)
+    def __init__(self, tracking_file_path: str = "session_tracking.json"):
+        self.host = config["backend_domain"]+":"+str(config["grpc_port"])
         self.tracking_file_path = tracking_file_path
         self.ir = irsdk.IRSDK()
         self.state = SessionState()
         self.channel = None
         self.stub = None
         self.tracking_client = TrackingClient(
-            user_id = config["iracing_user_id"],
-            domain=host,
-            port=http_port,
-            file_path=tracking_file_path
+            user_id=config["iracing_user_id"],
+            domain=config["backend_domain"],
+            port=config["http_port"],
+            base_dir=config["storage_path"]
         )
 
     def connect_to_grpc(self):
@@ -146,7 +146,7 @@ class IRacingClient:
                 last_sector_time = self.ir['LapLastLapTime']
 
             request = iracing_pb2.SendTelemetryRequest(
-                userId="898674",  # TODO: Make this configurable
+                userId=config["iracing_user_id"],  # Use configured user ID
                 sessionId=self.state.session_id,  # Use the same session ID
                 lap=lap,
                 lapCompleted=self.ir['LapCompleted'],

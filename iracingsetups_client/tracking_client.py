@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import requests
 from pathlib import Path
 
@@ -7,20 +8,28 @@ from pathlib import Path
 class TrackingClient:
     """Client for handling tracking-related HTTP requests and file operations."""
     
-    def __init__(self, user_id: str, domain: str = "localhost", port: int = 8080, file_path: str = "session_tracking.json"):
+    def __init__(self, user_id: str, domain: str = "localhost", port: int = 8080, base_dir: str = "."):
         """
         Initialize the tracking client.
         
         Args:
+            user_id (str): The user ID for tracking
             domain (str): The domain for the tracking server
             port (int): The port for the tracking server
-            file_path (str): The path where tracking data will be saved
+            base_dir (str): The base directory where tracking data will be saved
         """
         self.user_id = user_id
         self.domain = domain
         self.port = port
-        self.file_path = file_path
         self.base_url = f"http://{domain}:{port}"
+        
+        # Ensure base directory exists and is writable
+        self.base_dir = Path(base_dir)
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        if not os.access(self.base_dir, os.W_OK):
+            raise PermissionError(f"Directory {base_dir} is not writable")
+            
+        self.session_tracking_file = self.base_dir / "session_tracking.json"
 
     def update_session_tracking(self, session_id: str) -> bool:
         """
@@ -42,14 +51,19 @@ class TrackingClient:
             
             # Make the GET request
             response = requests.get(url)
-            response.raise_for_status()  # Raise an exception for bad status codes
             
-            # Create the directory if it doesn't exist
-            file_path = Path(self.file_path)
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+            # Handle different HTTP status codes
+            if response.status_code == 404:
+                logging.warning(f"Session {session_id} not found on server")
+                return False
+            elif response.status_code >= 500:
+                logging.error(f"Server error while updating tracking information: {response.status_code}")
+                return False
+                
+            response.raise_for_status()  # Raise an exception for other bad status codes
             
             # Write the response to file
-            with open(file_path, 'w') as f:
+            with open(self.session_tracking_file, 'w') as f:
                 json.dump(response.json(), f, indent=2)
             
             logging.info(f"Successfully updated tracking information for session {session_id}")

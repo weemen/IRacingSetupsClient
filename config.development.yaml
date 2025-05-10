@@ -3,6 +3,12 @@ disable_existing_loggers: False
 
 iracing_user_id: "898674"
 
+backend_domain: "192.168.178.104"
+grpc_port: 9001
+http_port: 8080
+
+storage_path: "C:\Temp"
+
 formatters:
     simple:
         format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
