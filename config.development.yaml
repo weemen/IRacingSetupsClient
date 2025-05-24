@@ -7,7 +7,7 @@ backend_domain: "192.168.178.104"
 grpc_port: 9001
 http_port: 8080
 
-storage_path: "C:\Temp"
+storage_path: "C:\\Temp"
 
 formatters:
     simple:

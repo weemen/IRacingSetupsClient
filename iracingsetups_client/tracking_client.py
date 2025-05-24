@@ -3,7 +3,7 @@ import logging
 import os
 import requests
 from pathlib import Path
-
+from iracingsetups_client.json_to_properties import flatten_json
 
 class TrackingClient:
     """Client for handling tracking-related HTTP requests and file operations."""
@@ -64,7 +64,7 @@ class TrackingClient:
             
             # Write the response to file
             with open(self.session_tracking_file, 'w') as f:
-                json.dump(response.json(), f, indent=2)
+                flatten_json(response.json())
             
             logging.info(f"Successfully updated tracking information for session {session_id}")
             return True
