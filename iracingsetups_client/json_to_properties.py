@@ -14,6 +14,12 @@ def flatten_json(y, prefix=''):
         out[prefix] = y
     return out
 
+def write_to_properties(data):
+    with open('c:\Temp\session_tracking.properties', 'w+') as f:
+        for key, value in data.items():
+            f.write(f"{key}={value}\n")
+
+
 # Load your JSON data
 # with open('./sample_data/sample.json', 'r') as f:
 #     data = json.load(f)
@@ -22,6 +28,6 @@ def flatten_json(y, prefix=''):
 # flat = flatten_json(data)
 
 # Write to a .properties file
-with open('c:\Temp\session_tracking.properties', 'w+') as f:
-    for key, value in flat.items():
-        f.write(f"{key}={value}\n")
+# with open('c:\Temp\session_tracking.properties', 'w+') as f:
+#     for key, value in flat.items():
+#         f.write(f"{key}={value}\n")
