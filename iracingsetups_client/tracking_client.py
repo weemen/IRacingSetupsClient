@@ -64,7 +64,7 @@ class TrackingClient:
             
             # Write the response to file
             with open(self.session_tracking_file, 'w') as f:
-                flatten_json(response.json())
+                flatten_json(response.json(), "current_session")
             
             logging.info(f"Successfully updated tracking information for session {session_id}")
             return True
