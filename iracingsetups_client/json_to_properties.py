@@ -22,6 +22,6 @@ with open('./sample_data/sample.json', 'r') as f:
 flat = flatten_json(data)
 
 # Write to a .properties file
-with open('c:\temp\session_tracking.properties', 'w') as f:
+with open('c:\temp\session_tracking.properties', 'w+') as f:
     for key, value in flat.items():
         f.write(f"{key}={value}\n")
