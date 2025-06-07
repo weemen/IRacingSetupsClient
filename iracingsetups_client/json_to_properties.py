@@ -15,11 +15,11 @@ def flatten_json(y, prefix=''):
     return out
 
 # Load your JSON data
-with open('./sample_data/sample.json', 'r') as f:
-    data = json.load(f)
+# with open('./sample_data/sample.json', 'r') as f:
+#     data = json.load(f)
 
 # Flatten the JSON
-flat = flatten_json(data)
+# flat = flatten_json(data)
 
 # Write to a .properties file
 with open('c:\Temp\session_tracking.properties', 'w+') as f:
