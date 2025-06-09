@@ -12,9 +12,10 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"iracingsetups_client/iracing.proto\x12\riracingsetups\"\x94\x01\n\x15SendNewSessionRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12*\n\x05track\x18\x03 \x01(\x0b\x32\x1b.iracingsetups.TrackMessage\x12,\n\x06\x64river\x18\x04 \x01(\x0b\x32\x1c.iracingsetups.DriverMessage\"c\n\x13SendCarSetupRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12)\n\x08\x63\x61rSetup\x18\x03 \x01(\x0b\x32\x17.iracingsetups.CarSetup\"\xaa\x01\n\x0cTrackMessage\x12\x0f\n\x07trackId\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nconfigName\x18\x03 \x01(\t\x12\x0c\n\x04\x63ity\x18\x04 \x01(\t\x12\x0f\n\x07\x63ountry\x18\x05 \x01(\t\x12)\n\x08trackGps\x18\x06 \x01(\x0b\x32\x17.iracingsetups.GPSTrack\x12\x0e\n\x06length\x18\x07 \x01(\t\x12\r\n\x05turns\x18\x08 \x01(\t\"J\n\x08GPSTrack\x12\x13\n\x0btrackGpsLat\x18\x01 \x01(\t\x12\x14\n\x0ctrackGpsLong\x18\x02 \x01(\t\x12\x13\n\x0btrackGpsAlt\x18\x03 \x01(\t\"\x8c\x01\n\rDriverMessage\x12\x10\n\x08\x64riverId\x18\x01 \x01(\t\x12\x12\n\ndriverName\x18\x02 \x01(\t\x12\x11\n\tdriverCar\x18\x03 \x01(\t\x12\x13\n\x0b\x64riverCarId\x18\x04 \x01(\t\x12\x14\n\x0c\x64riverTeamId\x18\x05 \x01(\t\x12\x17\n\x0f\x64riverSetupName\x18\x06 \x01(\t\"\x8f\x01\n\x08\x43\x61rSetup\x12\'\n\x07\x63hassis\x18\x01 \x01(\x0b\x32\x16.iracingsetups.Chassis\x12-\n\ndrivetrain\x18\x02 \x01(\x0b\x32\x19.iracingsetups.Drivetrain\x12+\n\ttyresAero\x18\x03 \x01(\x0b\x32\x18.iracingsetups.AeroTyres\"\xd7\x02\n\x07\x43hassis\x12\x31\n\x0c\x63hassisFront\x18\x01 \x01(\x0b\x32\x1b.iracingsetups.ChassisFront\x12\x39\n\x10\x63hassisLeftFront\x18\x02 \x01(\x0b\x32\x1f.iracingsetups.ChassisFrontSide\x12:\n\x11\x63hassisRightFront\x18\x03 \x01(\x0b\x32\x1f.iracingsetups.ChassisFrontSide\x12/\n\x0b\x63hassisRear\x18\x04 \x01(\x0b\x32\x1a.iracingsetups.ChassisRear\x12\x37\n\x0f\x63hassisLeftRear\x18\x05 \x01(\x0b\x32\x1e.iracingsetups.ChassisRearSide\x12\x38\n\x10\x63hassisRightRear\x18\x06 \x01(\x0b\x32\x1e.iracingsetups.ChassisRearSide\"\xc9\x02\n\x0c\x43hassisFront\x12\x11\n\tarbBlades\x18\x01 \x01(\t\x12\x19\n\x11\x61rbDriveArmLength\x18\x02 \x01(\t\x12\x0f\n\x07\x61rbSize\x18\x03 \x01(\t\x12\x19\n\x11\x62rakePressureBias\x18\x04 \x01(\t\x12\x13\n\x0b\x63rossWeight\x18\x05 \x01(\t\x12\x13\n\x0b\x64isplayPage\x18\x06 \x01(\t\x12\x1b\n\x13\x66rontMasterCylinder\x18\x07 \x01(\t\x12\x17\n\x0fheaveDamperDefl\x18\x08 \x01(\t\x12\x18\n\x10heavePerchOffset\x18\t \x01(\t\x12\x13\n\x0bheaveSpring\x18\n \x01(\t\x12\x17\n\x0fheaveSpringDefl\x18\x0b \x01(\t\x12\x1b\n\x13pushrodLengthOffset\x18\x0c \x01(\t\x12\x1a\n\x12rearMasterCylinder\x18\r \x01(\t\"\xec\x01\n\x10\x43hassisFrontSide\x12\x0e\n\x06\x63\x61mber\x18\x01 \x01(\t\x12\x0e\n\x06\x63\x61ster\x18\x02 \x01(\t\x12\x13\n\x0b\x63ompDamping\x18\x03 \x01(\t\x12\x14\n\x0c\x63ornerWeight\x18\x04 \x01(\t\x12\x12\n\nrbdDamping\x18\x05 \x01(\t\x12\x12\n\nrideHeight\x18\x06 \x01(\t\x12\x11\n\tshockDefl\x18\x07 \x01(\t\x12\x12\n\nspringDefl\x18\x08 \x01(\t\x12\r\n\x05toeIn\x18\t \x01(\t\x12\x14\n\x0ctorsionBarOD\x18\n \x01(\t\x12\x19\n\x11torsionBarPreload\x18\x0b \x01(\t\"\xe5\x01\n\x0b\x43hassisRear\x12\x19\n\x11\x61rbDriveArmLength\x18\x01 \x01(\t\x12\x0f\n\x07\x61rbSize\x18\x02 \x01(\t\x12\x19\n\x11\x62rakePressureBias\x18\x03 \x01(\t\x12\x11\n\tfuelLevel\x18\x04 \x01(\t\x12\x1b\n\x13pushrodLengthOffset\x18\x05 \x01(\t\x12\x17\n\x0fthirdDamperDefl\x18\x06 \x01(\t\x12\x18\n\x10thirdPerchOffset\x18\x07 \x01(\t\x12\x13\n\x0bthirdSpring\x18\x08 \x01(\t\x12\x17\n\x0fthirdSpringDefl\x18\t \x01(\t\"\xd9\x01\n\x0f\x43hassisRearSide\x12\x0e\n\x06\x63\x61mber\x18\x01 \x01(\t\x12\x13\n\x0b\x63ompDamping\x18\x02 \x01(\t\x12\x14\n\x0c\x63ornerWeight\x18\x03 \x01(\t\x12\x12\n\nrbdDamping\x18\x04 \x01(\t\x12\x12\n\nrideHeight\x18\x05 \x01(\t\x12\x11\n\tshockDefl\x18\x06 \x01(\t\x12\x12\n\nspringDefl\x18\x07 \x01(\t\x12\x19\n\x11springPerchOffset\x18\x08 \x01(\t\x12\x12\n\nspringRate\x18\t \x01(\t\x12\r\n\x05toeIn\x18\n \x01(\t\"v\n\nDrivetrain\x12\x35\n\x0e\x64rivetrainDiff\x18\x01 \x01(\x0b\x32\x1d.iracingsetups.DrivetrainDiff\x12\x31\n\x0c\x64rivetrainDt\x18\x02 \x01(\x0b\x32\x1b.iracingsetups.DrivetrainDt\"^\n\x0e\x44rivetrainDiff\x12\x1f\n\x17\x64iffClutchFrictionFaces\x18\x01 \x01(\t\x12\x13\n\x0b\x64iffPreload\x18\x02 \x01(\t\x12\x16\n\x0e\x64iffRampAngles\x18\x03 \x01(\t\"\x82\x01\n\x0c\x44rivetrainDt\x12\x11\n\tfirstGear\x18\x01 \x01(\t\x12\x12\n\nsecondGear\x18\x02 \x01(\t\x12\x11\n\tthirdGear\x18\x03 \x01(\t\x12\x12\n\nfourthGear\x18\x04 \x01(\t\x12\x11\n\tfifthGear\x18\x05 \x01(\t\x12\x11\n\tsixthGear\x18\x06 \x01(\t\"\x88\x02\n\tAeroTyres\x12+\n\taeroSetup\x18\x01 \x01(\x0b\x32\x18.iracingsetups.AeroSetup\x12\x32\n\x11\x61\x65roTyreLeftFront\x18\x02 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x33\n\x12\x61\x65roTyreRightFront\x18\x03 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x31\n\x10\x61\x65roTyreLeftRear\x18\x04 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x32\n\x11\x61\x65roTyreRightRear\x18\x05 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\"\xac\x01\n\tAeroSetup\x12\x13\n\x0b\x61\x65roPackage\x18\x01 \x01(\t\x12\x16\n\x0e\x66rontFlapAngle\x18\x02 \x01(\t\x12\x1e\n\x16\x66rontFlapConfiguration\x18\x03 \x01(\t\x12\x1b\n\x13\x66rontFlapGurneyFlap\x18\x04 \x01(\t\x12\x19\n\x11rearBeamWingAngle\x18\x05 \x01(\t\x12\x1a\n\x12rearUpperFlapAngle\x18\x06 \x01(\t\"g\n\x08\x41\x65roTyre\x12\x14\n\x0c\x63oldPressure\x18\x01 \x01(\t\x12\x17\n\x0flastHotPressure\x18\x02 \x01(\t\x12\x14\n\x0clastTempsOMI\x18\x03 \x01(\t\x12\x16\n\x0etreadRemaining\x18\x04 \x01(\t\"7\n\rSplitTimeInfo\x12&\n\x07sectors\x18\x01 \x03(\x0b\x32\x15.iracingsetups.Sector\"3\n\x06Sector\x12\x11\n\tsectorNum\x18\x01 \x01(\t\x12\x16\n\x0eSectorStartPct\x18\x02 \x01(\t\"\xf0\x02\n\x14SendTelemetryRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12\x0b\n\x03lap\x18\x03 \x01(\x05\x12\x14\n\x0clapCompleted\x18\x04 \x01(\x05\x12\x19\n\x11lapCurrentLapTime\x18\x05 \x01(\x02\x12\x19\n\x11lapDeltaToBestLap\x18\x06 \x01(\t\x12\x0f\n\x07lapDist\x18\x07 \x01(\t\x12\x12\n\nlapDistPct\x18\x08 \x01(\t\x12\x16\n\x0elapLastLapTime\x18\t \x01(\x02\x12 \n\x18playerCarMyIncidentCount\x18\n \x01(\t\x12\"\n\x1aplayerCarTeamIncidentCount\x18\x0b \x01(\t\x12\x11\n\tbrakeBias\x18\x0c \x01(\t\x12\x0e\n\x06sector\x18\r \x01(\x05\x12\x11\n\tisOnTrack\x18\x0e \x01(\t\x12\x0f\n\x07isInPit\x18\x0f \x01(\t\x12\x12\n\nisInGarage\x18\x10 \x01(\t\"8\n\x13SendTyreDataRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\"\x1e\n\x0bSucessReply\x12\x0f\n\x07message\x18\x01 \x01(\t2\xde\x02\n\x0eIracingService\x12T\n\x0eSendNewSession\x12$.iracingsetups.SendNewSessionRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12P\n\x0cSendCarSetup\x12\".iracingsetups.SendCarSetupRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12R\n\rSendTelemetry\x12#.iracingsetups.SendTelemetryRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12P\n\x0cSendTyreData\x12\".iracingsetups.SendTyreDataRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x42*\n\x18\x63om.weemen.iracingsetupsB\x0cIracingProtoP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\"iracingsetups_client/iracing.proto\x12\riracingsetups\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc2\x01\n\x15SendNewSessionRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12*\n\x05track\x18\x03 \x01(\x0b\x32\x1b.iracingsetups.TrackMessage\x12,\n\x06\x64river\x18\x04 \x01(\x0b\x32\x1c.iracingsetups.DriverMessage\x12,\n\x08\x64\x61teTime\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\x91\x01\n\x13SendCarSetupRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12)\n\x08\x63\x61rSetup\x18\x03 \x01(\x0b\x32\x17.iracingsetups.CarSetup\x12,\n\x08\x64\x61teTime\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xaa\x01\n\x0cTrackMessage\x12\x0f\n\x07trackId\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nconfigName\x18\x03 \x01(\t\x12\x0c\n\x04\x63ity\x18\x04 \x01(\t\x12\x0f\n\x07\x63ountry\x18\x05 \x01(\t\x12)\n\x08trackGps\x18\x06 \x01(\x0b\x32\x17.iracingsetups.GPSTrack\x12\x0e\n\x06length\x18\x07 \x01(\t\x12\r\n\x05turns\x18\x08 \x01(\t\"J\n\x08GPSTrack\x12\x13\n\x0btrackGpsLat\x18\x01 \x01(\t\x12\x14\n\x0ctrackGpsLong\x18\x02 \x01(\t\x12\x13\n\x0btrackGpsAlt\x18\x03 \x01(\t\"\x8c\x01\n\rDriverMessage\x12\x10\n\x08\x64riverId\x18\x01 \x01(\t\x12\x12\n\ndriverName\x18\x02 \x01(\t\x12\x11\n\tdriverCar\x18\x03 \x01(\t\x12\x13\n\x0b\x64riverCarId\x18\x04 \x01(\t\x12\x14\n\x0c\x64riverTeamId\x18\x05 \x01(\t\x12\x17\n\x0f\x64riverSetupName\x18\x06 \x01(\t\"\x8f\x01\n\x08\x43\x61rSetup\x12\'\n\x07\x63hassis\x18\x01 \x01(\x0b\x32\x16.iracingsetups.Chassis\x12-\n\ndrivetrain\x18\x02 \x01(\x0b\x32\x19.iracingsetups.Drivetrain\x12+\n\ttyresAero\x18\x03 \x01(\x0b\x32\x18.iracingsetups.AeroTyres\"\xd7\x02\n\x07\x43hassis\x12\x31\n\x0c\x63hassisFront\x18\x01 \x01(\x0b\x32\x1b.iracingsetups.ChassisFront\x12\x39\n\x10\x63hassisLeftFront\x18\x02 \x01(\x0b\x32\x1f.iracingsetups.ChassisFrontSide\x12:\n\x11\x63hassisRightFront\x18\x03 \x01(\x0b\x32\x1f.iracingsetups.ChassisFrontSide\x12/\n\x0b\x63hassisRear\x18\x04 \x01(\x0b\x32\x1a.iracingsetups.ChassisRear\x12\x37\n\x0f\x63hassisLeftRear\x18\x05 \x01(\x0b\x32\x1e.iracingsetups.ChassisRearSide\x12\x38\n\x10\x63hassisRightRear\x18\x06 \x01(\x0b\x32\x1e.iracingsetups.ChassisRearSide\"\xc9\x02\n\x0c\x43hassisFront\x12\x11\n\tarbBlades\x18\x01 \x01(\t\x12\x19\n\x11\x61rbDriveArmLength\x18\x02 \x01(\t\x12\x0f\n\x07\x61rbSize\x18\x03 \x01(\t\x12\x19\n\x11\x62rakePressureBias\x18\x04 \x01(\t\x12\x13\n\x0b\x63rossWeight\x18\x05 \x01(\t\x12\x13\n\x0b\x64isplayPage\x18\x06 \x01(\t\x12\x1b\n\x13\x66rontMasterCylinder\x18\x07 \x01(\t\x12\x17\n\x0fheaveDamperDefl\x18\x08 \x01(\t\x12\x18\n\x10heavePerchOffset\x18\t \x01(\t\x12\x13\n\x0bheaveSpring\x18\n \x01(\t\x12\x17\n\x0fheaveSpringDefl\x18\x0b \x01(\t\x12\x1b\n\x13pushrodLengthOffset\x18\x0c \x01(\t\x12\x1a\n\x12rearMasterCylinder\x18\r \x01(\t\"\xec\x01\n\x10\x43hassisFrontSide\x12\x0e\n\x06\x63\x61mber\x18\x01 \x01(\t\x12\x0e\n\x06\x63\x61ster\x18\x02 \x01(\t\x12\x13\n\x0b\x63ompDamping\x18\x03 \x01(\t\x12\x14\n\x0c\x63ornerWeight\x18\x04 \x01(\t\x12\x12\n\nrbdDamping\x18\x05 \x01(\t\x12\x12\n\nrideHeight\x18\x06 \x01(\t\x12\x11\n\tshockDefl\x18\x07 \x01(\t\x12\x12\n\nspringDefl\x18\x08 \x01(\t\x12\r\n\x05toeIn\x18\t \x01(\t\x12\x14\n\x0ctorsionBarOD\x18\n \x01(\t\x12\x19\n\x11torsionBarPreload\x18\x0b \x01(\t\"\xe5\x01\n\x0b\x43hassisRear\x12\x19\n\x11\x61rbDriveArmLength\x18\x01 \x01(\t\x12\x0f\n\x07\x61rbSize\x18\x02 \x01(\t\x12\x19\n\x11\x62rakePressureBias\x18\x03 \x01(\t\x12\x11\n\tfuelLevel\x18\x04 \x01(\t\x12\x1b\n\x13pushrodLengthOffset\x18\x05 \x01(\t\x12\x17\n\x0fthirdDamperDefl\x18\x06 \x01(\t\x12\x18\n\x10thirdPerchOffset\x18\x07 \x01(\t\x12\x13\n\x0bthirdSpring\x18\x08 \x01(\t\x12\x17\n\x0fthirdSpringDefl\x18\t \x01(\t\"\xd9\x01\n\x0f\x43hassisRearSide\x12\x0e\n\x06\x63\x61mber\x18\x01 \x01(\t\x12\x13\n\x0b\x63ompDamping\x18\x02 \x01(\t\x12\x14\n\x0c\x63ornerWeight\x18\x03 \x01(\t\x12\x12\n\nrbdDamping\x18\x04 \x01(\t\x12\x12\n\nrideHeight\x18\x05 \x01(\t\x12\x11\n\tshockDefl\x18\x06 \x01(\t\x12\x12\n\nspringDefl\x18\x07 \x01(\t\x12\x19\n\x11springPerchOffset\x18\x08 \x01(\t\x12\x12\n\nspringRate\x18\t \x01(\t\x12\r\n\x05toeIn\x18\n \x01(\t\"v\n\nDrivetrain\x12\x35\n\x0e\x64rivetrainDiff\x18\x01 \x01(\x0b\x32\x1d.iracingsetups.DrivetrainDiff\x12\x31\n\x0c\x64rivetrainDt\x18\x02 \x01(\x0b\x32\x1b.iracingsetups.DrivetrainDt\"^\n\x0e\x44rivetrainDiff\x12\x1f\n\x17\x64iffClutchFrictionFaces\x18\x01 \x01(\t\x12\x13\n\x0b\x64iffPreload\x18\x02 \x01(\t\x12\x16\n\x0e\x64iffRampAngles\x18\x03 \x01(\t\"\x82\x01\n\x0c\x44rivetrainDt\x12\x11\n\tfirstGear\x18\x01 \x01(\t\x12\x12\n\nsecondGear\x18\x02 \x01(\t\x12\x11\n\tthirdGear\x18\x03 \x01(\t\x12\x12\n\nfourthGear\x18\x04 \x01(\t\x12\x11\n\tfifthGear\x18\x05 \x01(\t\x12\x11\n\tsixthGear\x18\x06 \x01(\t\"\x88\x02\n\tAeroTyres\x12+\n\taeroSetup\x18\x01 \x01(\x0b\x32\x18.iracingsetups.AeroSetup\x12\x32\n\x11\x61\x65roTyreLeftFront\x18\x02 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x33\n\x12\x61\x65roTyreRightFront\x18\x03 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x31\n\x10\x61\x65roTyreLeftRear\x18\x04 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\x12\x32\n\x11\x61\x65roTyreRightRear\x18\x05 \x01(\x0b\x32\x17.iracingsetups.AeroTyre\"\xac\x01\n\tAeroSetup\x12\x13\n\x0b\x61\x65roPackage\x18\x01 \x01(\t\x12\x16\n\x0e\x66rontFlapAngle\x18\x02 \x01(\t\x12\x1e\n\x16\x66rontFlapConfiguration\x18\x03 \x01(\t\x12\x1b\n\x13\x66rontFlapGurneyFlap\x18\x04 \x01(\t\x12\x19\n\x11rearBeamWingAngle\x18\x05 \x01(\t\x12\x1a\n\x12rearUpperFlapAngle\x18\x06 \x01(\t\"g\n\x08\x41\x65roTyre\x12\x14\n\x0c\x63oldPressure\x18\x01 \x01(\t\x12\x17\n\x0flastHotPressure\x18\x02 \x01(\t\x12\x14\n\x0clastTempsOMI\x18\x03 \x01(\t\x12\x16\n\x0etreadRemaining\x18\x04 \x01(\t\"7\n\rSplitTimeInfo\x12&\n\x07sectors\x18\x01 \x03(\x0b\x32\x15.iracingsetups.Sector\"3\n\x06Sector\x12\x11\n\tsectorNum\x18\x01 \x01(\t\x12\x16\n\x0eSectorStartPct\x18\x02 \x01(\t\"\x9e\x03\n\x14SendTelemetryRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12\x0b\n\x03lap\x18\x03 \x01(\x05\x12\x14\n\x0clapCompleted\x18\x04 \x01(\x05\x12\x19\n\x11lapCurrentLapTime\x18\x05 \x01(\x02\x12\x19\n\x11lapDeltaToBestLap\x18\x06 \x01(\t\x12\x0f\n\x07lapDist\x18\x07 \x01(\t\x12\x12\n\nlapDistPct\x18\x08 \x01(\t\x12\x16\n\x0elapLastLapTime\x18\t \x01(\x02\x12 \n\x18playerCarMyIncidentCount\x18\n \x01(\t\x12\"\n\x1aplayerCarTeamIncidentCount\x18\x0b \x01(\t\x12\x11\n\tbrakeBias\x18\x0c \x01(\t\x12\x0e\n\x06sector\x18\r \x01(\x05\x12\x11\n\tisOnTrack\x18\x0e \x01(\t\x12\x0f\n\x07isInPit\x18\x0f \x01(\t\x12\x12\n\nisInGarage\x18\x10 \x01(\t\x12,\n\x08\x64\x61teTime\x18\x11 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"f\n\x13SendTyreDataRequest\x12\x0e\n\x06userId\x18\x01 \x01(\t\x12\x11\n\tsessionId\x18\x02 \x01(\t\x12,\n\x08\x64\x61teTime\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\x1e\n\x0bSucessReply\x12\x0f\n\x07message\x18\x01 \x01(\t2\xde\x02\n\x0eIracingService\x12T\n\x0eSendNewSession\x12$.iracingsetups.SendNewSessionRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12P\n\x0cSendCarSetup\x12\".iracingsetups.SendCarSetupRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12R\n\rSendTelemetry\x12#.iracingsetups.SendTelemetryRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x12P\n\x0cSendTyreData\x12\".iracingsetups.SendTyreDataRequest\x1a\x1a.iracingsetups.SucessReply\"\x00\x42*\n\x18\x63om.weemen.iracingsetupsB\x0cIracingProtoP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,50 +23,50 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'iracingsetups_client.iracin
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'\n\030com.weemen.iracingsetupsB\014IracingProtoP\001'
-  _globals['_SENDNEWSESSIONREQUEST']._serialized_start=54
-  _globals['_SENDNEWSESSIONREQUEST']._serialized_end=202
-  _globals['_SENDCARSETUPREQUEST']._serialized_start=204
-  _globals['_SENDCARSETUPREQUEST']._serialized_end=303
-  _globals['_TRACKMESSAGE']._serialized_start=306
-  _globals['_TRACKMESSAGE']._serialized_end=476
-  _globals['_GPSTRACK']._serialized_start=478
-  _globals['_GPSTRACK']._serialized_end=552
-  _globals['_DRIVERMESSAGE']._serialized_start=555
-  _globals['_DRIVERMESSAGE']._serialized_end=695
-  _globals['_CARSETUP']._serialized_start=698
-  _globals['_CARSETUP']._serialized_end=841
-  _globals['_CHASSIS']._serialized_start=844
-  _globals['_CHASSIS']._serialized_end=1187
-  _globals['_CHASSISFRONT']._serialized_start=1190
-  _globals['_CHASSISFRONT']._serialized_end=1519
-  _globals['_CHASSISFRONTSIDE']._serialized_start=1522
-  _globals['_CHASSISFRONTSIDE']._serialized_end=1758
-  _globals['_CHASSISREAR']._serialized_start=1761
-  _globals['_CHASSISREAR']._serialized_end=1990
-  _globals['_CHASSISREARSIDE']._serialized_start=1993
-  _globals['_CHASSISREARSIDE']._serialized_end=2210
-  _globals['_DRIVETRAIN']._serialized_start=2212
-  _globals['_DRIVETRAIN']._serialized_end=2330
-  _globals['_DRIVETRAINDIFF']._serialized_start=2332
-  _globals['_DRIVETRAINDIFF']._serialized_end=2426
-  _globals['_DRIVETRAINDT']._serialized_start=2429
-  _globals['_DRIVETRAINDT']._serialized_end=2559
-  _globals['_AEROTYRES']._serialized_start=2562
-  _globals['_AEROTYRES']._serialized_end=2826
-  _globals['_AEROSETUP']._serialized_start=2829
-  _globals['_AEROSETUP']._serialized_end=3001
-  _globals['_AEROTYRE']._serialized_start=3003
-  _globals['_AEROTYRE']._serialized_end=3106
-  _globals['_SPLITTIMEINFO']._serialized_start=3108
-  _globals['_SPLITTIMEINFO']._serialized_end=3163
-  _globals['_SECTOR']._serialized_start=3165
-  _globals['_SECTOR']._serialized_end=3216
-  _globals['_SENDTELEMETRYREQUEST']._serialized_start=3219
-  _globals['_SENDTELEMETRYREQUEST']._serialized_end=3587
-  _globals['_SENDTYREDATAREQUEST']._serialized_start=3589
-  _globals['_SENDTYREDATAREQUEST']._serialized_end=3645
-  _globals['_SUCESSREPLY']._serialized_start=3647
-  _globals['_SUCESSREPLY']._serialized_end=3677
-  _globals['_IRACINGSERVICE']._serialized_start=3680
-  _globals['_IRACINGSERVICE']._serialized_end=4030
+  _globals['_SENDNEWSESSIONREQUEST']._serialized_start=87
+  _globals['_SENDNEWSESSIONREQUEST']._serialized_end=281
+  _globals['_SENDCARSETUPREQUEST']._serialized_start=284
+  _globals['_SENDCARSETUPREQUEST']._serialized_end=429
+  _globals['_TRACKMESSAGE']._serialized_start=432
+  _globals['_TRACKMESSAGE']._serialized_end=602
+  _globals['_GPSTRACK']._serialized_start=604
+  _globals['_GPSTRACK']._serialized_end=678
+  _globals['_DRIVERMESSAGE']._serialized_start=681
+  _globals['_DRIVERMESSAGE']._serialized_end=821
+  _globals['_CARSETUP']._serialized_start=824
+  _globals['_CARSETUP']._serialized_end=967
+  _globals['_CHASSIS']._serialized_start=970
+  _globals['_CHASSIS']._serialized_end=1313
+  _globals['_CHASSISFRONT']._serialized_start=1316
+  _globals['_CHASSISFRONT']._serialized_end=1645
+  _globals['_CHASSISFRONTSIDE']._serialized_start=1648
+  _globals['_CHASSISFRONTSIDE']._serialized_end=1884
+  _globals['_CHASSISREAR']._serialized_start=1887
+  _globals['_CHASSISREAR']._serialized_end=2116
+  _globals['_CHASSISREARSIDE']._serialized_start=2119
+  _globals['_CHASSISREARSIDE']._serialized_end=2336
+  _globals['_DRIVETRAIN']._serialized_start=2338
+  _globals['_DRIVETRAIN']._serialized_end=2456
+  _globals['_DRIVETRAINDIFF']._serialized_start=2458
+  _globals['_DRIVETRAINDIFF']._serialized_end=2552
+  _globals['_DRIVETRAINDT']._serialized_start=2555
+  _globals['_DRIVETRAINDT']._serialized_end=2685
+  _globals['_AEROTYRES']._serialized_start=2688
+  _globals['_AEROTYRES']._serialized_end=2952
+  _globals['_AEROSETUP']._serialized_start=2955
+  _globals['_AEROSETUP']._serialized_end=3127
+  _globals['_AEROTYRE']._serialized_start=3129
+  _globals['_AEROTYRE']._serialized_end=3232
+  _globals['_SPLITTIMEINFO']._serialized_start=3234
+  _globals['_SPLITTIMEINFO']._serialized_end=3289
+  _globals['_SECTOR']._serialized_start=3291
+  _globals['_SECTOR']._serialized_end=3342
+  _globals['_SENDTELEMETRYREQUEST']._serialized_start=3345
+  _globals['_SENDTELEMETRYREQUEST']._serialized_end=3759
+  _globals['_SENDTYREDATAREQUEST']._serialized_start=3761
+  _globals['_SENDTYREDATAREQUEST']._serialized_end=3863
+  _globals['_SUCESSREPLY']._serialized_start=3865
+  _globals['_SUCESSREPLY']._serialized_end=3895
+  _globals['_IRACINGSERVICE']._serialized_start=3898
+  _globals['_IRACINGSERVICE']._serialized_end=4248
 # @@protoc_insertion_point(module_scope)

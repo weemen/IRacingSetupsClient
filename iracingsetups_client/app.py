@@ -5,6 +5,7 @@ import uuid
 from dataclasses import dataclass
 
 import grpc
+from google.protobuf.timestamp_pb2 import Timestamp
 import irsdk
 
 import iracingsetups_client.iracing_pb2 as iracing_pb2
@@ -90,7 +91,8 @@ class IRacingClient:
                     driverCarId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['CarID']),
                     driverTeamId=str(self.ir['DriverInfo']['Drivers'][self.ir['DriverInfo']['DriverCarIdx']]['TeamID']),
                     driverSetupName=self.ir['DriverInfo']['DriverSetupName']
-                )
+                ),
+                dateTime=Timestamp()
             )
             
             response = self.stub.SendNewSession(request)
@@ -121,7 +123,8 @@ class IRacingClient:
                     ),
                     drivetrain=self._create_drivetrain(),
                     tyresAero=self._create_tyres_aero()
-                )
+                ),
+                dateTime=Timestamp()
             )
             
             response = self.stub.SendCarSetup(request)
@@ -161,7 +164,8 @@ class IRacingClient:
                 sector=self.state.previous_sector,
                 isOnTrack=str(self.ir['IsOnTrack']),
                 isInPit=str(self.state.is_in_pit),
-                isInGarage=str(self.ir['IsInGarage'])
+                isInGarage=str(self.ir['IsInGarage']),
+                dateTime=Timestamp()
             )
             
             response = self.stub.SendTelemetry(request)

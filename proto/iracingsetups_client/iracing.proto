@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 
 option java_multiple_files = true;
 option java_package = "com.weemen.iracingsetups";
@@ -20,12 +21,14 @@ message SendNewSessionRequest {
   string sessionId = 2;
   TrackMessage track = 3;
   DriverMessage driver = 4;
+  google.protobuf.Timestamp dateTime = 5;
 }
 
 message SendCarSetupRequest {
   string userId = 1;
   string sessionId = 2;
   CarSetup carSetup = 3;
+  google.protobuf.Timestamp dateTime = 4;
 }
 
 message TrackMessage {
@@ -196,11 +199,13 @@ message SendTelemetryRequest {
   string isOnTrack = 14;
   string isInPit = 15;
   string isInGarage = 16;
+  google.protobuf.Timestamp dateTime = 17;
 }
 
 message SendTyreDataRequest {
   string userId = 1;
   string sessionId = 2;
+  google.protobuf.Timestamp dateTime = 3;
 }
 message SucessReply {
   string message = 1;
