@@ -370,6 +370,7 @@ class IRacingClient:
                         # logging.info("Sending telemetry: LAP %s, SECTOR %s", self.state.current_lap, self.state.last_sector)
                         self.state.sector_changed = False
                         self.send_telemetry()
+                        time.sleep(2)
                         self.tracking_client.update_session_tracking(self.state.session_id)
 
                 else:

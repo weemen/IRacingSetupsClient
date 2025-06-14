@@ -186,8 +186,6 @@ class TestFlattenJson(unittest.TestCase):
         with open('./session_tracking.properties', 'w+') as f:
             for key, value in flattened.items():
                 f.write(f"{key}={value}\n")
-            f.write("")
-            f.close()
 
     def test_flatten_json_with_prefix(self):
         # Test with a prefix
