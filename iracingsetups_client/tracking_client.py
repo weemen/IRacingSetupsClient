@@ -62,9 +62,7 @@ class TrackingClient:
                 
             response.raise_for_status()  # Raise an exception for other bad status codes
             
-            # Write the response to file
-            with open(self.session_tracking_file, 'w') as f:
-                write_to_properties(flatten_json(response.json(), "current_session"))
+            write_to_properties(flatten_json(response.json(), "current_session"))
             
             logging.info(f"Successfully updated tracking information for session {session_id}")
             return True

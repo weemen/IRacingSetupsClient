@@ -183,6 +183,12 @@ class TestFlattenJson(unittest.TestCase):
         # So total keys should be: (1 + 5 + 5 + 5 + 5 + 5) * 3 = 78
         self.assertEqual(len(flattened), 78)
 
+        with open('./session_tracking.properties', 'w+') as f:
+            for key, value in flattened.items():
+                f.write(f"{key}={value}\n")
+            f.write("")
+            f.close()
+
     def test_flatten_json_with_prefix(self):
         # Test with a prefix
         test_data = {"a": 1, "b": {"c": 2}}

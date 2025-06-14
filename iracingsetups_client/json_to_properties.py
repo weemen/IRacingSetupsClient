@@ -18,6 +18,8 @@ def write_to_properties(data):
     with open('c:\Temp\session_tracking.properties', 'w+') as f:
         for key, value in data.items():
             f.write(f"{key}={value}\n")
+        f.write("")
+        f.close()
 
 
 # Load your JSON data
